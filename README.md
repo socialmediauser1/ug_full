@@ -16,12 +16,13 @@ Mentcare is built in blocks by five teams. Team 4 builds the Admissions and Outr
 
 Use the "Viewing as" menu at the top to switch between the referrer, intake coordinator, triage clinician, and patient and carer views, or start from the sign-in page. A full walkthrough:
 
-1. As the referrer, send a referral (use "Fill with sample patient" to save typing).
-2. As the intake coordinator, open it in the referral inbox, mark the documents reviewed, and assign it for triage.
-3. As the triage clinician, open it, resolve the existing records check, and accept it.
-4. As the intake coordinator, admit the patient from New patients: book a slot, then admit.
-5. Send an outreach message, edit a reminder sequence, or create a session.
-6. As the patient and carer, see the letter and texts received and register for the carer evening.
+1. As the referrer (Dr Sarah Ahmed), send a referral. The form checks every field, including date of birth, NHS number, UK mobile format, and the required urgency and risk. "Fill with sample patient" saves typing. You can also attach a file, and the referral then appears under My referrals.
+2. As the intake coordinator (Lorna Kerr), open the referral in the inbox, mark the documents reviewed, and assign it for triage. Tabs, search, and the source filter work, and the counts update.
+3. As the triage clinician (Dr Ewan Fraser), open the referral. For Rory you must resolve the existing records check first. Then set priority and choose Accept, Request more information, or Redirect. The referrer sees the result and can reply to information requests.
+4. Back as the intake coordinator, go to New patients and admit the patient: book an APPOINTMENTS slot, then admit. The four admission steps tick off one by one, and a welcome letter is queued.
+5. In Outreach messages, channels without patient consent are disabled, and text messages with clinical wording are rejected. Every send is added to the contact history.
+6. You can also edit reminder sequences (add or remove steps, activate or pause), create sessions and mark attendance, and watch the pipeline numbers update.
+7. As the patient and carer, see the letter and texts the patient received, and register for the carer information evening.
 
 Changes are saved in the browser. "Reset demo data" restores the starting data. The prototype is plain HTML, CSS, and JavaScript with no build step and no server; screens for other blocks show a placeholder.
 
