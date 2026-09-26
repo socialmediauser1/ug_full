@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>User's Guide: Mentcare Patient Information System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>
+/* Guide chrome tokens (theme-aware). Product mockups keep their own fixed light UI palette below. */
+:root{
+  --bg:#F7F8F6; --surface:#FFFFFF; --ink:#1B2420; --muted:#5B6863; --rule:#DCE2DE;
+  --brand:#1F3F66; --accent:#B7811A; --mk:#B7811A; --mk-ink:#fff;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#131A17; --surface:#1B2420; --ink:#E7ECE9; --muted:#9AA8A2; --rule:#2E3A35;
+    --brand:#8DB4DE; --accent:#E0AE4B;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#131A17; --surface:#1B2420; --ink:#E7ECE9; --muted:#9AA8A2; --rule:#2E3A35;
+  --brand:#8DB4DE; --accent:#E0AE4B;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px); scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Public Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:16px;line-height:1.55}
+a{color:var(--brand)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Layout */
+.layout{display:grid;grid-template-columns:250px minmax(0,1fr);max-width:1400px;margin:0 auto}
+nav.toc{position:sticky;top:env(safe-area-inset-top,0px);height:100vh;overflow:auto;padding:28px 20px;border-right:1px solid var(--rule);font-size:14px}
+nav.toc h2{font-family:"Source Serif 4",Georgia,serif;font-size:17px;margin:0 0 4px}
+nav.toc p{margin:0 0 18px;color:var(--muted);font-size:13px}
+nav.toc h3{font-size:13px;color:var(--muted);font-weight:600;margin:18px 0 6px}
+nav.toc ul{list-style:none;margin:0;padding:0}
+nav.toc li a{display:block;padding:4px 8px;border-radius:6px;text-decoration:none;color:var(--ink)}
+nav.toc li a:hover{background:var(--rule)}
+.toggle{margin-top:22px;display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
+main{padding:40px 48px 120px;min-width:0}
+.prose{max-width:74ch}
+@media (max-width:900px){.layout{grid-template-columns:1fr} nav.toc{position:static;height:auto;border-right:0;border-bottom:1px solid var(--rule)} main{padding:28px 18px 80px}}
+
+/* Hero: the admissions path */
+.hero{padding:8px 0 36px;border-bottom:1px solid var(--rule);margin-bottom:40px}
+.hero .kicker{color:var(--muted);font-size:15px;margin:0 0 10px}
+.hero h1{font-family:"Source Serif 4",Georgia,serif;font-weight:700;font-size:clamp(34px,4.6vw,56px);line-height:1.05;margin:0 0 26px;letter-spacing:-.01em;max-width:18ch}
+.path{display:flex;flex-wrap:wrap;align-items:center;gap:0;margin:0 0 26px;padding:0;list-style:none;counter-reset:p}
+.path li{font-family:"Source Serif 4",Georgia,serif;font-size:clamp(18px,2.1vw,26px);font-weight:600;display:flex;align-items:center}
+.path li:not(:last-child)::after{content:"";display:inline-block;width:38px;height:2px;background:var(--accent);margin:0 12px}
+.path li.alt{color:var(--muted);font-weight:400}
+.meta-row{display:flex;flex-wrap:wrap;gap:6px 28px;font-size:14px;color:var(--muted)}
+.meta-row strong{color:var(--ink);font-weight:600}
+
+h2.part{font-family:"Source Serif 4",Georgia,serif;font-size:32px;margin:64px 0 8px;line-height:1.15}
+h2.part + p{color:var(--muted);margin-top:0}
+.screen{margin:48px 0 0;padding-top:8px}
+.screen h3{font-family:"Source Serif 4",Georgia,serif;font-size:25px;margin:0 0 4px}
+.screen .who{font-size:14px;color:var(--muted);margin:0 0 12px}
+.screen .who b{color:var(--accent);font-weight:600}
+.fig-cap{font-size:13px;color:var(--muted);margin:8px 0 14px}
+ol.steps{max-width:74ch;padding-left:0;list-style:none;counter-reset:s;margin:14px 0 0}
+ol.steps li{counter-increment:s;position:relative;padding-left:38px;margin:0 0 9px}
+ol.steps li::before{content:counter(s);position:absolute;left:0;top:1px;width:24px;height:24px;border-radius:50%;background:var(--mk);color:var(--mk-ink);font-size:13px;font-weight:700;display:grid;place-items:center}
+.note{max-width:74ch;border-left:3px solid var(--accent);padding:6px 14px;margin:14px 0;color:var(--ink);background:var(--surface)}
+
+table.ref{border-collapse:collapse;font-size:14px;width:100%;min-width:640px}
+table.ref th,table.ref td{border-bottom:1px solid var(--rule);padding:9px 10px;text-align:left;vertical-align:top}
+table.ref th{font-weight:600;color:var(--muted)}
+.scroll{overflow-x:auto;max-width:100%}
+td.y{color:var(--brand);font-weight:700;text-align:center}
+td.n{color:var(--muted);text-align:center}
+
+/* ---------- Product mockups (fixed light product palette) ---------- */
+.frame{--u-bg:#F4F6F5;--u-surf:#fff;--u-ink:#18211D;--u-mut:#5F6D67;--u-line:#DDE3E0;--u-brand:#1F3F66;--u-brand-2:#2E5A8A;--u-gold:#B7811A;--u-red:#B3372B;--u-blue:#2D5B8C;
+  border:1px solid #C9D1CD;border-radius:10px;overflow:hidden;background:var(--u-bg);color:var(--u-ink);font-size:13px;line-height:1.45;min-width:980px;box-shadow:0 1px 0 rgba(0,0,0,.04),0 12px 30px -18px rgba(20,40,30,.35)}
+.frame-wrap{overflow-x:auto;max-width:100%;padding:6px 14px 10px 14px;margin:0 -14px}
+.bar{display:flex;align-items:center;gap:10px;background:#E6EAE8;padding:8px 12px;border-bottom:1px solid #D0D8D4}
+.dots{display:flex;gap:6px}.dots i{width:10px;height:10px;border-radius:50%;background:#C3CBC7;display:block}
+.url{flex:1;background:#fff;border-radius:6px;padding:4px 10px;color:#56645E;font-size:12px}
+.pubnav{display:flex;align-items:center;gap:22px;background:var(--u-brand);color:#fff;padding:14px 26px}
+.wordmark{font-family:"Source Serif 4",Georgia,serif;font-size:18px;font-weight:700;margin-right:auto;display:flex;align-items:center;gap:10px}
+.crest{width:26px;height:26px;border-radius:5px;background:#fff;color:var(--u-brand);display:grid;place-items:center;font-size:14px;font-weight:700}
+.pubnav a{color:#D6E2EF;text-decoration:none}
+.pubnav a.on{color:#fff;font-weight:600;border-bottom:2px solid var(--u-gold);padding-bottom:2px}
+.pubnav .btn-ghost{border:1px solid rgba(255,255,255,.5);border-radius:6px;padding:5px 12px;color:#fff}
+.body{padding:26px}
+.grid2{display:grid;grid-template-columns:1.4fr 1fr;gap:22px}
+.grid2>*,.grid3>*{min-width:0}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{background:var(--u-surf);border:1px solid var(--u-line);border-radius:8px;padding:18px;position:relative}
+.card h4{margin:0 0 4px;font-size:16px}
+.card .sub{color:var(--u-mut);margin:0 0 14px}
+.card h4.ui-h,.ui-h{font-family:"Source Serif 4",Georgia,serif;font-size:24px;margin:0 0 4px}
+.lbl{display:block;font-weight:600;margin:0 0 4px;font-size:12.5px}
+.lbl small{font-weight:400;color:var(--u-mut)}
+.fld{margin:0 0 13px;position:relative}
+.in{border:1px solid #C5CEC9;border-radius:6px;background:#fff;padding:8px 10px;min-height:35px;color:var(--u-ink)}
+.in.ph{color:#98A39E}
+.in.sel{display:flex;justify-content:space-between}
+.in.sel::after{content:"▾";color:var(--u-mut)}
+.in.area{min-height:70px}
+.in.err{border-color:var(--u-red);box-shadow:0 0 0 2px #F3D6D2}
+.errtxt{color:var(--u-red);font-size:12px;margin-top:4px}
+.row{display:flex;gap:12px}.row>*{flex:1}
+.chk{display:flex;gap:8px;align-items:flex-start;margin:4px 0 14px}
+.box{display:inline-block;width:16px;height:16px;border:1.5px solid #9AA6A0;border-radius:3px;flex:none;margin-top:1px;background:#fff}
+.box.on{background:var(--u-brand);border-color:var(--u-brand);position:relative}
+.box.on::after{content:"";position:absolute;left:4px;top:1px;width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.btn{white-space:nowrap;display:inline-flex;align-items:center;gap:6px;background:var(--u-brand);color:#fff;border-radius:6px;padding:8px 16px;font-weight:600;border:1px solid var(--u-brand)}
+.btn.sec{background:#fff;color:var(--u-brand)}
+.btn.sm{padding:5px 10px;font-size:12px}
+.btn.gold{background:var(--u-gold);border-color:var(--u-gold)}
+.toast{border-radius:7px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start}
+.toast.ok{background:#E3F1EA;border:1px solid #A9D1BD;color:#1D4A36}
+.toast.bad{background:#FBE9E6;border:1px solid #EDB9B1;color:#7E241A}
+.toast.info{background:#E7EEF6;border:1px solid #B8CCE2;color:#23476D}
+.muted{color:var(--u-mut)}
+.chip{display:inline-block;border-radius:999px;padding:2px 9px;font-size:11.5px;font-weight:600;white-space:nowrap}
+.c-sub{background:#E7EEF6;color:#23476D}.c-rev{background:#FBF1DC;color:#7A5410}.c-acc{background:#E0F0E7;color:#1D5A3E}.c-rej{background:#F6E1DE;color:#8A2A20}
+.c-hi{background:#F6E1DE;color:#8A2A20}.c-med{background:#FBF1DC;color:#7A5410}.c-lo{background:#EDF0EE;color:#4F5C56}
+table.t{width:100%;border-collapse:collapse;background:#fff}
+table.t th{font-size:11.5px;color:var(--u-mut);font-weight:600;text-align:left;padding:9px 10px;border-bottom:1px solid var(--u-line);background:#FAFBFA}
+table.t td{padding:9px 10px;border-bottom:1px solid #EEF1EF;vertical-align:middle}
+table.t tr.hl td{background:#EEF3FA}
+.tbl{border:1px solid var(--u-line);border-radius:8px;position:relative;background:#fff}
+.tbl table.t{background:transparent}.tbl table.t th{background:transparent}
+/* Staff shell */
+.staff{display:grid;grid-template-columns:200px 1fr;min-height:520px}
+.side{background:#16283F;color:#D3DEEA;padding:18px 12px}
+.side .wordmark{color:#fff;font-size:15px;margin-bottom:22px}
+.side .crest{width:22px;height:22px;font-size:12px}
+.side a{display:flex;justify-content:space-between;padding:8px 10px;border-radius:6px;color:#D3DEEA;text-decoration:none;margin-bottom:2px}
+.side a.on{background:#27415F;color:#fff;font-weight:600}
+.side .cnt{background:#B7811A;color:#fff;border-radius:999px;font-size:11px;padding:0 7px}
+.side .foot{margin-top:28px;border-top:1px solid #2A3F5A;padding-top:14px;font-size:12px;color:#9FB2C8}
+.top{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:#fff;border-bottom:1px solid var(--u-line)}
+.top h5{margin:0;font-size:18px;font-family:"Source Serif 4",Georgia,serif}
+.who-pill{display:flex;align-items:center;gap:8px;color:var(--u-mut)}
+.av{width:28px;height:28px;border-radius:50%;background:#D9E4F0;color:var(--u-brand);display:grid;place-items:center;font-weight:700;font-size:12px}
+.stat{font-family:"Source Serif 4",Georgia,serif;font-size:34px;font-weight:700;line-height:1;margin:4px 0}
+.barrow{display:grid;grid-template-columns:100px 1fr 34px;gap:10px;align-items:center;margin:8px 0}
+.track{height:12px;background:#EEF1EF;border-radius:3px;overflow:hidden}.track i{display:block;height:100%}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--u-line);margin-bottom:14px}
+.tabs span{padding:8px 12px;color:var(--u-mut);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs span.on{color:var(--u-ink);font-weight:600;border-color:var(--u-brand)}
+.toolbar{display:flex;gap:10px;align-items:center;margin-bottom:12px;position:relative}
+.toolbar .in{min-width:0;flex:1}
+.drop{border:1.5px dashed #9FB3A9;border-radius:8px;padding:14px;background:#F6F9FC;text-align:center;color:var(--u-mut)}
+.file{display:flex;align-items:center;gap:10px;border:1px solid var(--u-line);border-radius:7px;padding:9px 11px;background:#fff;margin-top:8px}
+.ficon{width:30px;height:36px;border-radius:4px;background:#F6E1DE;color:#8A2A20;display:grid;place-items:center;font-size:10px;font-weight:700}
+.timeline{list-style:none;margin:0;padding:0}
+.timeline li{display:grid;grid-template-columns:26px 1fr;gap:12px;padding-bottom:18px;position:relative}
+.timeline li::before{content:"";position:absolute;left:12px;top:24px;bottom:0;width:2px;background:var(--u-line)}
+.timeline li:last-child::before{display:none}
+.dot{width:26px;height:26px;border-radius:50%;border:2px solid var(--u-line);background:#fff;display:grid;place-items:center;font-size:12px;font-weight:700}
+.dot.done{background:var(--u-brand);border-color:var(--u-brand);color:#fff}
+.dot.now{border-color:var(--u-gold);color:var(--u-gold)}
+.docview{background:#E9EDEB;border-radius:8px;padding:16px;height:300px;position:relative}
+.page{background:#fff;width:74%;margin:0 auto;height:100%;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.08);font-size:10px;color:#555}
+.page .ln{height:6px;background:#E5E9E7;border-radius:2px;margin:7px 0}
+.code{background:#15202E;color:#D5E7DE;border-radius:8px;padding:14px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;white-space:pre;overflow:auto;line-height:1.5}
+.code .k{color:#E0B45A}.code .s{color:#9FD3B8}
+.evcard{border:1px solid var(--u-line);border-radius:8px;background:#fff;position:relative}
+.evdate{border-radius:7px 7px 0 0;background:#E8EEF6;padding:12px 14px;display:flex;gap:12px;align-items:center}
+.evdate b{font-family:"Source Serif 4",Georgia,serif;font-size:26px;color:var(--u-brand);line-height:1}
+.evbody{padding:12px 14px}
+.evcard.sel{outline:2px solid var(--u-gold)}
+.seg{display:inline-flex;border:1px solid #C5CEC9;border-radius:6px;overflow:hidden}
+.seg span{padding:6px 12px;background:#fff;white-space:nowrap}.seg span.on{background:var(--u-brand);color:#fff}
+.sso{max-width:380px;margin:30px auto;background:#fff;border:1px solid var(--u-line);border-radius:10px;padding:26px;position:relative}
+
+/* Step markers */
+.mk{position:absolute;z-index:3;width:24px;height:24px;border-radius:50%;background:var(--mk,#B7811A);color:#fff;font:700 12px/24px "Public Sans",sans-serif;text-align:center;box-shadow:0 0 0 3px rgba(255,255,255,.9),0 2px 6px rgba(0,0,0,.25);font-style:normal}
+.frame .mk{--mk:#B7811A}
+body.nomk .mk{display:none}
+.rel{position:relative}
+
+@media print{nav.toc{display:none}.layout{display:block}.screen{break-inside:avoid}.frame{min-width:0}}
+
+.pbanner{display:flex;flex-wrap:wrap;align-items:center;gap:8px 22px;background:#fff;border-bottom:1px solid var(--u-line);padding:12px 24px;position:relative}
+.pbanner .nm{font-family:"Source Serif 4",Georgia,serif;font-size:19px;font-weight:700}
+.pbanner .kv{color:var(--u-mut);font-size:12px}.pbanner .nm{white-space:nowrap}.pbanner .kv b{white-space:nowrap;display:block;color:var(--u-ink);font-size:13px}
+.risk{display:inline-flex;align-items:center;gap:6px;background:#B3372B;color:#fff;border-radius:6px;padding:5px 10px;font-weight:700;font-size:12px}
+.risk.med{background:#B7811A}.risk.low{background:#5F6D67}
+.stale{background:#FBF1DC;border-bottom:1px solid #EACB8C;color:#6E4C0E;padding:8px 24px;display:flex;gap:10px;align-items:center}
+.sec-h{font-weight:700;font-size:13px;margin:0 0 8px;display:flex;justify-content:space-between;align-items:center}
+.list{margin:0;padding:0;list-style:none}.list li{padding:7px 0;border-bottom:1px solid #EEF1EF}.list li:last-child{border:0}
+.modal{background:#fff;border:1px solid #D9B0A9;border-top:4px solid #B3372B;border-radius:8px;padding:16px;box-shadow:0 14px 30px -12px rgba(0,0,0,.35);position:relative}
+.spin{width:14px;height:14px;border:2px solid #B8CCE2;border-top-color:#23476D;border-radius:50%;display:inline-block}
+.cnt-note{font-size:11px;color:var(--u-mut);text-align:right;margin-top:3px}
+.letter{background:#fff;border:1px solid var(--u-line);border-radius:4px;padding:18px 22px;font-family:"Source Serif 4",Georgia,serif;font-size:12.5px;line-height:1.55;box-shadow:0 2px 8px rgba(0,0,0,.06);position:relative}
+.pill{display:inline-block;border:1px solid var(--u-line);border-radius:999px;padding:3px 10px;margin:0 6px 6px 0;background:#fff}
+.pill.on{background:#E8EEF6;border-color:#9DB5D3;font-weight:600}
+.statusbar{display:flex;justify-content:space-between;background:#EEF2F6;border-top:1px solid var(--u-line);padding:6px 16px;font-size:11.5px;color:var(--u-mut)}
+.side a{font-size:12.5px;align-items:center}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="Guide contents"><h2>User's Guide</h2><p>Mentcare Admissions and Outreach block, Team 4</p>
+<ul><li><a href="#overview">Overview</a></li><li><a href="#place">Place in Mentcare</a></li><li><a href="#reqs">Features</a></li><li><a href="#roles">Users and access</a></li></ul><h3>Referrers</h3><ul><li><a href="#s1">1. Send a referral</a></li></ul><h3>Intake team and triage clinicians</h3><ul><li><a href="#s2">2. Work through the referral inbox</a></li><li><a href="#s3">3. Triage a referral and decide</a></li><li><a href="#s4">4. Admit the patient: create the record and first appointment</a></li><li><a href="#s5">5. Send a message to a patient or carer</a></li><li><a href="#s6">6. Set up automatic reminders and follow-up</a></li><li><a href="#s7">7. Run group sessions and carer events</a></li><li><a href="#s8">8. Referral pipeline overview</a></li></ul><h3>People outside the service</h3><ul><li><a href="#s9">9. What referrers, patients and carers receive</a></li></ul>
+<ul><li><a href="mentcare-user-guide.html">Whole-system guide</a></li></ul>
+<label class="toggle"><input type="checkbox" id="mktoggle" checked> Show step markers on screens</label></nav>
+<main>
+<header class="hero" id="overview"><p class="kicker">Phase I, User's Guide and Walkthrough. Team 4</p>
+<h1>Mentcare Admissions and Outreach</h1>
+<ol class="path" aria-label="Admission path"><li>Referral</li><li>Triage</li><li>Admission</li><li>First appointment</li><li class="alt">Clinical care</li></ol>
+<div class="meta-row"><span><strong>Team 4:</strong> Bogdan Borachuk, Lev Lavryniuk, Antonii Maltsev</span><span><strong>Stack:</strong> React, Spring Boot, MySQL, REST</span></div></header>
+
+<section class="prose"><h2 class="part" style="margin-top:0">Overview</h2>
+<p>Mentcare is built in blocks by five teams and assembled into one system at the end of the semester. Team 4 builds the Admissions and Outreach block: everything that happens between a doctor deciding a patient needs specialist mental health care and that patient attending their first clinic appointment, and the outreach that keeps patients and their families in contact with the service afterwards.</p>
+<p>In Mentcare, every patient is referred, either by their own doctor, by an Accident and Emergency doctor, or by a hospital doctor after treatment. The block receives these referrals, lets a clinician triage them, and turns accepted referrals into patient records with a booked first appointment. Because patients with mental health problems often miss appointments or lose contact, the block also sends letters and text reminders, follows up missed appointments automatically, and runs group sessions and information evenings for carers.</p>
+<p>The block does not hold consultations, prescriptions, or risk assessments; those belong to other blocks. Screens in this guide are mockups of the planned product; names and figures are sample data. Numbered markers on each screen match the steps below it.</p></section>
+
+<section id="place"><h2 class="part">Place in Mentcare</h2><p class="prose">Admissions and Outreach exchanges data with other blocks through REST APIs. Block names below follow the whole-system guide and will be confirmed with the other teams.</p>
+<div class="scroll"><table class="ref"><thead><tr><th>Block</th><th>What Admissions and Outreach provides</th><th>What it uses</th></tr></thead><tbody><tr><td><b>Core platform</b></td><td>Sign-in and roles for referrers and staff; sending of emails and text messages; audit log</td><td>Uses its single sign-on, role checks and message delivery</td></tr><tr><td><b>Patient records</b></td><td>Receives a new or reopened patient record at admission, with the referral attached</td><td>Provides the existing-records search used for the duplicate check</td></tr><tr><td><b>Appointments and clinics</b></td><td>Books the first appointment</td><td>Provides free slots; reports Did not attend, which starts follow-up</td></tr><tr><td><b>Clinical care</b></td><td>Referral reason and referrer's risk assessment are visible in the new record</td><td>Discharge or detention stops reminder sequences</td></tr><tr><td><b>Reporting</b></td><td>Anonymised pipeline figures for monthly management reports</td><td>None</td></tr></tbody></table></div></section>
+
+<section id="reqs"><h2 class="part">Features</h2><p class="prose">Each feature traces to sections of the Mentcare requirements document.</p>
+<div class="scroll"><table class="ref"><thead><tr><th>ID</th><th>Feature</th><th>Description</th><th>Mentcare section</th></tr></thead><tbody><tr><td><b>AO-01</b></td><td>Referral submission</td><td>Referrers submit a referral with patient details, reason, urgency, risk, documents, and contact consent, and can follow its status.</td><td>1.1, 3.1.1, 3.1.9</td></tr><tr><td><b>AO-02</b></td><td>Referral inbox and triage</td><td>Intake staff see referrals by stage and priority and assign them to a triage clinician, who sets priority and decides.</td><td>1.1, 3.1.12</td></tr><tr><td><b>AO-03</b></td><td>Document review</td><td>Referral documents are viewable only by authorised staff and can be marked reviewed.</td><td>6.1.1, 6.2.1</td></tr><tr><td><b>AO-04</b></td><td>Duplicate check and admission</td><td>Accepted referrals are checked against existing records and become patient records, with a generated ID if no NHS number.</td><td>2.7, 3.1.1, 3.1.5</td></tr><tr><td><b>AO-05</b></td><td>First appointment</td><td>The first appointment is booked in the APPOINTMENTS system at admission.</td><td>2.3.2, 3.3.1</td></tr><tr><td><b>AO-06</b></td><td>Outreach messages</td><td>Staff send letters, texts, or emails to patients and consenting carers using templates; results are shown and logged.</td><td>6.2.2</td></tr><tr><td><b>AO-07</b></td><td>Reminder sequences</td><td>Automatic appointment reminders and missed-appointment follow-up, stopping when the patient rebooks or is detained.</td><td>1.1, 3.3.3, 5.8</td></tr><tr><td><b>AO-08</b></td><td>Pipeline overview</td><td>Anonymised counts of referrals by stage and source, waiting times, and outreach results, available to management reports.</td><td>3.4, 6.2</td></tr><tr><td><b>AO-09</b></td><td>Sessions and carer events</td><td>Staff create group sessions and carer events and manage registrations and attendance.</td><td>1.1, 3.3</td></tr></tbody></table></div></section>
+
+<section id="roles"><h2 class="part">Users and access</h2>
+<div class="scroll"><table class="ref"><thead><tr><th>Feature</th><th>Referrer</th><th>Intake coordinator</th><th>Triage clinician</th><th>Patient or carer</th></tr></thead><tbody><tr><td>Send and follow referrals</td><td class="y">Yes</td><td class="n">No</td><td class="n">No</td><td class="n">No</td></tr><tr><td>Referral inbox, assign for triage</td><td class="n">No</td><td class="y">Yes</td><td class="y">View</td><td class="n">No</td></tr><tr><td>Triage decision and priority</td><td class="n">No</td><td class="n">No</td><td class="y">Yes</td><td class="n">No</td></tr><tr><td>Admit patient, book first appointment</td><td class="n">No</td><td class="y">Yes</td><td class="n">No</td><td class="n">No</td></tr><tr><td>Outreach messages and reminder sequences</td><td class="n">No</td><td class="y">Yes</td><td class="y">View</td><td class="y">Receives</td></tr><tr><td>Sessions and carer events</td><td class="n">No</td><td class="y">Yes</td><td class="y">View</td><td class="y">Registers</td></tr><tr><td>Pipeline overview</td><td class="n">No</td><td class="y">Yes</td><td class="y">View</td><td class="n">No</td></tr></tbody></table></div>
+<p class="note">Referral documents and patient contact details are visible only to intake staff and clinicians. Messages go only to the patient and carers the patient has agreed may be contacted (Mentcare 6.2.2). Pipeline figures contain no patient-identifiable information.</p></section>
+<h2 class="part">Referrers</h2><p class="prose">GPs, A&amp;E doctors and hospital doctors send referrals into the service.</p><section class="screen" id="s1"><h3>1. Send a referral</h3><p class="who"><b>Referrer (GP, A&E or hospital doctor)</b>, AO-01, AO-03; Mentcare 1.1, 3.1.1, 3.1.9</p>
+<p class="prose">Every Mentcare patient arrives through a referral from their own doctor, an Accident and Emergency doctor, or a hospital doctor after a course of treatment. Referrers sign in with their health authority account and complete one form. They can attach the referral letter and any supporting documents, and they indicate how urgent the referral is and whether there are safety concerns.</p><div class="frame-wrap"><div class="frame">
+<div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://mentcare.midscot-health.scot/referrals/new</div></div>
+<div class="pubnav"><div class="wordmark"><span class="crest">M</span>Mentcare referrals</div><a class="on">New referral</a><a class="">My referrals</a><span class="who-pill" style="color:#D6E2EF"><span class="av">SA</span>Dr Sarah Ahmed, Tay Street Medical Practice</span></div>
+<div class="body grid2" style="grid-template-columns:1.6fr 1fr">
+<div class="card">
+<h4 class="ui-h">New referral to mental health services</h4><p class="sub">Fields marked * are required.</p>
+<p class="lbl rel" style="font-size:14px;margin:4px 0 10px"><i class="mk" style="left:-34px;top:-4px">1</i>Patient</p>
+<div class="row"><div class="fld"><span class="lbl">Full name *</span><div class="in">Rory Buchanan</div></div><div class="fld"><span class="lbl">Date of birth *</span><div class="in">03/07/1997</div></div><div class="fld"><span class="lbl">NHS number</span><div class="in">723 004 1187</div></div></div>
+<div class="row"><div class="fld"><span class="lbl">Address *</span><div class="in">22 Glover Street, Perth PH2 0JB</div></div><div class="fld"><span class="lbl">Mobile phone</span><div class="in err">0771 23</div><div class="errtxt">Enter a full UK mobile number, for example 07712 345678.</div></div></div>
+<div class="fld"><span class="lbl">Next of kin or carer</span><div class="in">Anne Buchanan (mother), 01738 552 190</div></div>
+<p class="lbl rel" style="font-size:14px;margin:4px 0 10px"><i class="mk" style="left:-34px;top:-4px">2</i>Reason for referral</p>
+<div class="fld"><div class="in area" style="min-height:64px">Low mood for 4 months, withdrawn from work and friends, poor sleep. No response to 8 weeks of citalopram 20 mg. Requests specialist assessment.</div><div class="cnt-note">141 of 2,000 characters</div></div>
+<div class="row rel"><i class="mk" style="left:-34px;top:18px">3</i><div class="fld"><span class="lbl">Urgency *</span><div class="seg"><span>Routine</span><span class="on">Soon</span><span>Urgent</span></div></div><div class="fld"><span class="lbl">Risk of harm to self or others *</span><div class="seg"><span class="on">None known</span><span>Some</span><span>Significant</span></div></div></div>
+</div>
+<div>
+<div class="card rel"><i class="mk" style="left:-12px;top:-12px">4</i><h4>Documents</h4><p class="sub">Referral letter and any recent reports. PDF or image, up to 10 MB each.</p>
+<div class="drop">Drag files here or <b style="color:var(--u-brand)">choose files</b></div>
+<div class="file"><span class="ficon">PDF</span><div style="flex:1"><b>referral_letter_buchanan.pdf</b><br><span class="muted">240 KB</span></div><span class="muted">Remove</span></div></div>
+<div class="card rel" style="margin-top:14px"><i class="mk" style="left:-12px;top:-12px">5</i><h4>Contact consent</h4>
+<div class="chk"><span class="box on"></span><span>Patient agrees to be contacted by text message</span></div><div class="chk"><span class="box"></span><span>Patient agrees to be contacted by email</span></div>
+<div class="chk"><span class="box on"></span><span>Patient agrees that their carer may be contacted</span></div>
+<span class="btn rel">Send referral<i class="mk" style="right:-10px;top:-16px">6</i></span>
+<div class="toast bad" style="margin-top:12px"><b>!</b><div>1 field needs attention: Mobile phone.</div></div></div>
+<p class="muted" style="margin:12px 2px 0">For a referral where the patient is at immediate risk, also phone the duty clinician.</p></div></div><div class="statusbar"><span>Mentcare, Mid-Scotland Health Authority</span><span>Supported browser: Firefox. Service hours 08:00 to 18:30, Monday to Friday</span></div></div></div><p class="fig-cap">Figure 1. Send a referral.</p><ol class="steps"><li>Enter the patient's details. If the patient does not have or know their NHS number, leave it empty; Mentcare will generate a unique patient ID when the referral is accepted.</li><li>Describe the reason for referral: symptoms, history, and treatment tried so far.</li><li>Choose the urgency (Routine, Soon, or Urgent) and indicate any known risk of harm. Both are required and are used to prioritise the referral.</li><li>Attach the referral letter and any recent reports.</li><li>Record which ways the patient has agreed to be contacted. Outreach messages only use the channels ticked here.</li><li>Select <b>Send referral</b>. Any missing or invalid field is outlined in red with an explanation. Once sent, the referral appears under <b>My referrals</b> with the status Received, and the referrer is told when a decision is made.</li></ol></section><h2 class="part">Intake team and triage clinicians</h2><p class="prose">The intake coordinator manages referrals and outreach; a clinician triages each referral.</p><section class="screen" id="s2"><h3>2. Work through the referral inbox</h3><p class="who"><b>Intake coordinator</b>, AO-02, AO-08</p>
+<p class="prose">The referral inbox is where the intake team sees every new referral. Referrals are sorted by priority so urgent ones and those with safety concerns are handled first. From here the coordinator checks the documents and passes each referral to a clinician for triage.</p><div class="frame-wrap"><div class="frame">
+<div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://mentcare.midscot-health.scot/intake/referrals</div></div>
+<div class="staff">
+<div class="side rel"><div class="wordmark"><span class="crest">M</span>Mentcare</div><a class="on">Referral inbox <span class=cnt>7</span></a><a class="">New patients</a><a class="">Outreach messages</a><a class="">Reminder sequences</a><a class="">Sessions and events</a><a class="">Pipeline overview</a>
+<div class="foot">Signed in as<br><b style="color:#fff">Lorna Kerr</b><br>Intake coordinator</div></div>
+<div><div class="top"><h5>Referral inbox</h5><span class="who-pill"><span class="av">LK</span>Lorna Kerr</span></div><div class="body">
+<div class="grid3" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px" >
+<div class="card rel" style="padding:12px 14px"><i class="mk" style="left:-12px;top:-12px">1</i><span class="muted">Received</span><div class="stat" style="font-size:28px">7</div></div>
+<div class="card" style="padding:12px 14px"><span class="muted">With triage clinician</span><div class="stat" style="font-size:28px">5</div></div>
+<div class="card" style="padding:12px 14px"><span class="muted">Waiting for information</span><div class="stat" style="font-size:28px">2</div></div>
+<div class="card" style="padding:12px 14px"><span class="muted">Accepted this week</span><div class="stat" style="font-size:28px">11</div></div></div>
+<div class="tabs rel"><i class="mk" style="left:-34px;top:4px">2</i><span class="on">Received (7)</span><span>With triage (5)</span><span>Waiting for information (2)</span><span>Accepted</span><span>Redirected</span></div>
+<div class="toolbar"><div class="in ph">Search name, NHS number or referral number</div><div class="in sel">All sources</div><div class="in sel">All clinics</div></div>
+<div class="tbl rel"><i class="mk" style="left:-12px;top:-12px">3</i><table class="t"><tr><th>Referral</th><th>Patient</th><th>Source</th><th>Received</th><th>Priority</th><th>Documents</th><th></th></tr>
+<tr><td style="white-space:nowrap">R-2026-0917</td><td><b>Name not given</b><br><span class="muted">Male, about 40, no NHS number</span></td><td>A&amp;E, Perth Royal</td><td>Today 08:12</td><td><span class="chip c-hi">Urgent</span> <span class="risk" style="font-size:10.5px;padding:1px 6px">Risk</span></td><td>Not reviewed</td><td><span class="btn sm">Assign</span></td></tr>
+<tr class="hl"><td style="white-space:nowrap">R-2026-0913</td><td><b>Rory Buchanan</b><br><span class="muted">723 004 1187</span></td><td>GP, Tay Street</td><td>Yesterday</td><td><span class="chip c-med">Soon</span></td><td>Reviewed</td><td><span class="btn sm rel">Assign<i class="mk" style="right:-12px;top:-16px">4</i></span></td></tr>
+<tr><td style="white-space:nowrap">R-2026-0910</td><td><b>Eilidh Brown</b><br><span class="muted">108 223 5671</span></td><td>Hospital, ward 7</td><td>24&nbsp;Sep</td><td><span class="chip c-med">Soon</span></td><td>Not reviewed</td><td><span class="btn sm">Assign</span></td></tr>
+<tr><td style="white-space:nowrap">R-2026-0904</td><td><b>Graham Hay</b><br><span class="muted">559 610 2208</span></td><td>GP, Crieff</td><td>23&nbsp;Sep</td><td><span class="chip c-lo">Routine</span></td><td>Reviewed</td><td><span class="btn sm">Assign</span></td></tr></table></div></div></div></div><div class="statusbar"><span>Mentcare, Mid-Scotland Health Authority</span><span>Supported browser: Firefox. Service hours 08:00 to 18:30, Monday to Friday</span></div></div></div><p class="fig-cap">Figure 2. Work through the referral inbox.</p><ol class="steps"><li>The summary shows how many referrals are at each stage.</li><li>Use the tabs to see referrals by stage, and search or filter by source and clinic.</li><li>The list is ordered by priority. Urgent referrals and referrals with a risk flag are at the top. Unidentified patients from A&amp;E are listed by description until identified.</li><li>Open a referral to check its documents and mark them reviewed, then select <b>Assign</b> to send it to a triage clinician. The referrer can see that the referral is under review.</li></ol></section><section class="screen" id="s3"><h3>3. Triage a referral and decide</h3><p class="who"><b>Triage clinician</b>, AO-02, AO-03, AO-04; Mentcare 2.7, 3.1.12</p>
+<p class="prose">The triage clinician reads the referral and documents, checks whether the patient already has a Mentcare record, sets the priority, and makes a decision: accept, ask the referrer for more information, or redirect to a more suitable service. The referrer is informed of the decision automatically.</p><div class="frame-wrap"><div class="frame">
+<div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://mentcare.midscot-health.scot/triage/R-2026-0913</div></div>
+<div class="staff">
+<div class="side rel"><div class="wordmark"><span class="crest">M</span>Mentcare</div><a class="on">Referrals to triage</a><a class="">Find a patient</a><a class="">Today's clinic</a>
+<div class="foot">Signed in as<br><b style="color:#fff">Dr Ewan Fraser</b><br>Triage clinician</div></div>
+<div><div class="top"><h5>Triage referral R-2026-0913</h5><span class="who-pill"><span class="av">EF</span>Dr Ewan Fraser</span></div><div class="pbanner"><div><div class="nm">Rory Buchanan</div><span class="muted">Male, 29. Referral R-2026-0913</span></div>
+<div class="kv">NHS number<b>723 004 1187</b></div><div class="kv">Date of birth<b>03 Jul 1997</b></div><div class="kv">Referred by<b>Dr Sarah Ahmed, GP</b></div>
+<span class="chip c-rev" style="margin-left:auto;font-size:12px;padding:4px 10px">Priority: Soon</span></div><div class="body">
+<div class="grid2" style="grid-template-columns:1.2fr 1fr">
+<div><div class="card rel"><i class="mk" style="left:-12px;top:-12px">1</i><p class="sec-h">Reason for referral</p><p style="margin:0 0 10px">Low mood for 4 months, withdrawn from work and friends, poor sleep. No response to 8 weeks of citalopram 20 mg. Requests specialist assessment.</p>
+<div class="row"><div><span class="lbl">Urgency from referrer</span>Soon</div><div><span class="lbl">Risk from referrer</span>None known</div><div><span class="lbl">Contact</span>Text, carer</div></div>
+<div class="docview" style="height:170px;margin-top:12px"><div class="page"><b style="font-size:11px;color:#333">Tay Street Medical Practice, referral letter</b><div class="ln" style="width:60%"></div><div class="ln"></div><div class="ln" style="width:85%"></div><div class="ln"></div><div class="ln" style="width:70%"></div></div></div>
+<div class="chk" style="margin:10px 0 0"><span class="box on"></span><span><b>Documents reviewed</b> <span class="muted">Lorna Kerr, 27 Sep 2026</span></span></div></div>
+<div class="card rel" style="margin-top:14px"><i class="mk" style="left:-12px;top:-12px">2</i><p class="sec-h">Existing records check</p>
+<div class="toast info"><div><b>Possible match:</b> Rory Buchanan, born 11 Feb 1968, NHS 402 118 7736. Seen at Stirling clinic, last consultation March 2023. Date of birth and NHS number differ.</div></div>
+<div style="margin-top:10px"><span class="btn sec sm">Same person: reopen record</span> <span class="btn sm">Different person</span></div></div></div>
+<div class="card">
+<div class="fld rel"><i class="mk" style="left:-34px;top:18px">3</i><span class="lbl">Priority</span><div class="seg"><span>Routine</span><span class="on">Soon</span><span>Urgent</span></div><p class="muted" style="margin:6px 0 0">Soon: first appointment within the local target for non-urgent specialist referrals.</p></div>
+<div class="fld rel"><i class="mk" style="left:-34px;top:18px">4</i><span class="lbl">Decision</span><div class="in sel">Accept</div></div>
+<div class="row"><div class="fld"><span class="lbl">Clinic</span><div class="in sel">Perth day clinic</div></div><div class="fld"><span class="lbl">Responsible consultant</span><div class="in sel">Dr Ewan Fraser</div></div></div>
+<div class="fld"><span class="lbl">Message to referrer</span><div class="in area">Accepted. Patient will be offered a first appointment at Perth day clinic. Please continue citalopram until seen.</div></div>
+<span class="btn rel">Save decision<i class="mk" style="right:-10px;top:-16px">5</i></span>
+<div class="toast ok" style="margin-top:12px"><b>✓</b><div>Referral accepted. Dr Sarah Ahmed has been notified. Ready for admission.</div></div>
+<p class="muted" style="margin:12px 0 0">Other decisions: <b>Request more information</b> sends your questions to the referrer; <b>Redirect</b> records the service suggested instead and the reason.</p></div></div></div></div></div><div class="statusbar"><span>Mentcare, Mid-Scotland Health Authority</span><span>Supported browser: Firefox. Service hours 08:00 to 18:30, Monday to Friday</span></div></div></div><p class="fig-cap">Figure 3. Triage a referral and decide.</p><ol class="steps"><li>Read the reason for referral, the referrer's urgency and risk assessment, and the attached letter.</li><li>Check the existing-records match. Mentcare searches by name, date of birth, and NHS number. If the patient was seen before, select <b>Same person</b> to reopen their record instead of creating a duplicate; here the dates of birth differ, so it is a different person.</li><li>Set the priority. It can differ from the urgency the referrer gave.</li><li>Choose a decision. For <b>Accept</b>, choose the clinic and responsible consultant.</li><li>Write a message to the referrer and select <b>Save decision</b>. The referrer is notified and can see the new status under My referrals.</li></ol></section><section class="screen" id="s4"><h3>4. Admit the patient: create the record and first appointment</h3><p class="who"><b>Intake coordinator</b>, AO-04, AO-05; Mentcare 2.3.2, 3.1.1, 3.1.5, 3.3.1</p>
+<p class="prose">Once a referral is accepted, the intake coordinator admits the patient. The new patient record is filled in from the referral, so nothing is typed twice. The first appointment is booked in the APPOINTMENTS system, and the record is handed to the patient records block, where clinical staff take over.</p><div class="frame-wrap"><div class="frame">
+<div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://mentcare.midscot-health.scot/intake/admit/R-2026-0913</div></div>
+<div class="staff">
+<div class="side rel"><div class="wordmark"><span class="crest">M</span>Mentcare</div><a class="">Referral inbox</a><a class="on">New patients</a><a class="">Outreach messages</a><a class="">Reminder sequences</a><a class="">Sessions and events</a><a class="">Pipeline overview</a>
+<div class="foot">Signed in as<br><b style="color:#fff">Lorna Kerr</b><br>Intake coordinator</div></div>
+<div><div class="top"><h5>Admit Rory Buchanan</h5><span class="who-pill"><span class="av">LK</span>Lorna Kerr</span></div><div class="pbanner"><div><div class="nm">Rory Buchanan</div><span class="muted">Male, 29. Referral R-2026-0913</span></div>
+<div class="kv">NHS number<b>723 004 1187</b></div><div class="kv">Date of birth<b>03 Jul 1997</b></div><div class="kv">Referred by<b>Dr Sarah Ahmed, GP</b></div>
+<span class="chip c-rev" style="margin-left:auto;font-size:12px;padding:4px 10px">Priority: Soon</span></div><div class="body">
+<div class="grid3" style="grid-template-columns:1fr 1fr 1.15fr">
+<div class="card rel"><i class="mk" style="left:-12px;top:-12px">1</i><h4>Patient record</h4><p class="sub">Filled in from referral R-2026-0913</p>
+<div class="fld"><span class="lbl">Patient identifier</span><div class="in">NHS 723 004 1187</div></div>
+<div class="fld"><span class="lbl">Address</span><div class="in">22 Glover Street, Perth PH2 0JB</div></div>
+<div class="fld"><span class="lbl">Mobile</span><div class="in">07712 345678</div></div>
+<div class="fld"><span class="lbl">Registered practice</span><div class="in">Tay Street Medical Practice</div></div>
+<div class="fld"><span class="lbl">Family contact</span><div class="in">Anne Buchanan (mother)</div></div>
+<p class="muted" style="margin:0">No NHS number? Mentcare generates an ID such as MC-000812.</p></div>
+<div class="card rel"><i class="mk" style="left:-12px;top:-12px">2</i><h4>First appointment</h4><p class="sub">Free slots from APPOINTMENTS, Perth day clinic, Dr E. Fraser</p>
+<ul class="list"><li><span class="box"></span> Tue 6 Oct, 09:30</li><li style="background:#EEF3FA;margin:0 -8px;padding:7px 8px"><span class="box on"></span> <b>Thu 8 Oct, 14:00</b></li><li><span class="box"></span> Mon 12 Oct, 10:15</li><li><span class="box"></span> Wed 14 Oct, 11:00</li></ul>
+<span class="btn sm" style="margin-top:8px">Book selected slot</span></div>
+<div class="card rel"><i class="mk" style="left:-12px;top:-12px">3</i><h4>Admission</h4><p class="sub">Clinic: Perth day clinic. Consultant: Dr E. Fraser. First appointment: Thu 8 Oct, 14:00.</p>
+<span class="btn">Admit patient</span>
+<ul class="list" style="margin-top:10px"><li style="color:#1D5A3E">✓ Record sent to patient records</li><li style="color:#1D5A3E">✓ Appointment booked in APPOINTMENTS</li><li style="color:#1D5A3E">✓ Welcome letter and reminders started</li><li style="color:#1D5A3E">✓ Referrer notified</li></ul>
+<div class="code" style="margin-top:12px;font-size:10.5px;white-space:pre-wrap"><span class="k">POST</span> /api/patients
+{ <span class="s">"nhsNumber"</span>: <span class="s">"7230041187"</span>,
+  <span class="s">"referralId"</span>: <span class="s">"R-2026-0913"</span>,
+  <span class="s">"clinic"</span>: <span class="s">"PERTH-DAY"</span>,
+  <span class="s">"consultant"</span>: <span class="s">"efraser"</span> }</div></div></div></div></div></div><div class="statusbar"><span>Mentcare, Mid-Scotland Health Authority</span><span>Supported browser: Firefox. Service hours 08:00 to 18:30, Monday to Friday</span></div></div></div><p class="fig-cap">Figure 4. Admit the patient: create the record and first appointment.</p><ol class="steps"><li>Check the patient record. It is filled in from the referral; correct anything that has changed. If the patient has no NHS number, a unique Mentcare ID is generated.</li><li>Choose a first appointment from the free slots in the APPOINTMENTS system for the chosen clinic and consultant, and select <b>Book selected slot</b>.</li><li>Select <b>Admit patient</b>. The record is sent to the patient records block, the appointment is booked, the welcome letter and reminder sequence start, and the referrer is told. The ticks show each step succeeded; any step that fails is shown in red with a <b>Retry</b> button.</li></ol></section><section class="screen" id="s5"><h3>5. Send a message to a patient or carer</h3><p class="who"><b>Intake coordinator</b>, AO-06; Mentcare 6.2.2, 3.1.5</p>
+<p class="prose">Outreach messages keep patients in touch with the service: welcome letters, appointment information, and follow-up after a missed appointment. Messages go only to the patient and to carers the patient has agreed may be contacted, and only through the channels they consented to. Text messages never contain clinical details.</p><div class="frame-wrap"><div class="frame">
+<div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://mentcare.midscot-health.scot/intake/outreach/new</div></div>
+<div class="staff">
+<div class="side rel"><div class="wordmark"><span class="crest">M</span>Mentcare</div><a class="">Referral inbox</a><a class="">New patients</a><a class="on">Outreach messages</a><a class="">Reminder sequences</a><a class="">Sessions and events</a><a class="">Pipeline overview</a>
+<div class="foot">Signed in as<br><b style="color:#fff">Lorna Kerr</b><br>Intake coordinator</div></div>
+<div><div class="top"><h5>New message</h5><span class="who-pill"><span class="av">LK</span>Lorna Kerr</span></div><div class="pbanner"><div><div class="nm">Rory Buchanan</div><span class="muted">Male, 29. Referral R-2026-0913</span></div>
+<div class="kv">NHS number<b>723 004 1187</b></div><div class="kv">Date of birth<b>03 Jul 1997</b></div><div class="kv">Referred by<b>Dr Sarah Ahmed, GP</b></div>
+<span class="chip c-rev" style="margin-left:auto;font-size:12px;padding:4px 10px">Priority: Soon</span></div><div class="body">
+<div class="grid2" style="grid-template-columns:1fr 1.2fr">
+<div class="card">
+<div class="fld rel"><i class="mk" style="left:-34px;top:18px">1</i><span class="lbl">Patient</span><div class="in">Rory Buchanan, 723 004 1187</div></div>
+<div class="fld"><span class="lbl">Send to</span><div class="chk" style="margin:4px 0"><span class="box on"></span>Rory Buchanan (patient)</div><div class="chk" style="margin:4px 0"><span class="box"></span>Anne Buchanan (carer, consent given)</div></div>
+<div class="fld rel"><i class="mk" style="left:-34px;top:18px">2</i><span class="lbl">Channel</span><div class="seg"><span class="on">Letter</span><span>Text</span><span style="color:#aab">Email (no consent)</span></div></div>
+<div class="fld rel"><i class="mk" style="left:-34px;top:18px">3</i><span class="lbl">Template</span><div class="in sel">Welcome and first appointment</div></div></div>
+<div><div class="letter rel"><i class="mk" style="left:-12px;top:-12px">4</i><b>Perth Day Clinic, Mental Health Services</b><br><span style="color:#666">28 September 2026</span><br><br>Dear Rory,<br><br>Your doctor has referred you to our service and we would like to see you. Your first appointment is on <b>Thursday 8 October at 14:00</b> with Dr Ewan Fraser at Perth Day Clinic.<br><br>If you cannot come, please call 01738 473 000 and we will find another time. You are welcome to bring someone with you.</div>
+<div style="display:flex;gap:10px;margin-top:12px"><span class="btn rel">Send letter<i class="mk" style="right:-10px;top:-16px">5</i></span><span class="btn sec">Edit text</span></div>
+<div class="toast ok" style="margin-top:12px"><b>✓</b><div>Letter sent to the print queue for posting. Recorded in the patient's contact history.</div></div></div></div></div></div></div><div class="statusbar"><span>Mentcare, Mid-Scotland Health Authority</span><span>Supported browser: Firefox. Service hours 08:00 to 18:30, Monday to Friday</span></div></div></div><p class="fig-cap">Figure 5. Send a message to a patient or carer.</p><ol class="steps"><li>Choose the patient. Their carers are listed only if the patient has agreed they may be contacted.</li><li>Choose the channel. Channels the patient has not consented to cannot be selected.</li><li>Choose a template. Names, dates, and clinic details are filled in automatically.</li><li>Check the preview and edit the text if needed.</li><li>Select <b>Send</b>. The result shows whether sending succeeded, and every message is kept in the patient's contact history.</li></ol></section><section class="screen" id="s6"><h3>6. Set up automatic reminders and follow-up</h3><p class="who"><b>Intake coordinator</b>, AO-07; Mentcare 1.1, 3.3.3, 5.8</p>
+<p class="prose">Many patients miss appointments, so Mentcare sends reminders automatically and follows up when an appointment is missed. Each reminder sequence is a timed list of steps. A sequence stops by itself when the patient rebooks, is discharged, or is detained in hospital.</p><div class="frame-wrap"><div class="frame">
+<div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://mentcare.midscot-health.scot/intake/sequences/missed-appointment</div></div>
+<div class="staff">
+<div class="side rel"><div class="wordmark"><span class="crest">M</span>Mentcare</div><a class="">Referral inbox</a><a class="">New patients</a><a class="">Outreach messages</a><a class="on">Reminder sequences</a><a class="">Sessions and events</a><a class="">Pipeline overview</a>
+<div class="foot">Signed in as<br><b style="color:#fff">Lorna Kerr</b><br>Intake coordinator</div></div>
+<div><div class="top"><h5>Reminder sequences</h5><span class="who-pill"><span class="av">LK</span>Lorna Kerr</span></div><div class="body">
+<div class="grid2" style="grid-template-columns:1fr 1.7fr">
+<div class="card rel"><i class="mk" style="left:-12px;top:-12px">1</i><h4>Sequences</h4><ul class="list" style="margin-top:6px">
+<li><b>Appointment reminders</b> <span class="chip c-acc">Active</span><br><span class="muted">142 patients</span></li>
+<li style="background:#EEF3FA;margin:0 -8px;padding:7px 8px"><b>Missed appointment follow-up</b> <span class="chip c-acc">Active</span><br><span class="muted">9 patients</span></li>
+<li><b>Carer session reminders</b> <span class="chip c-lo">Paused</span><br><span class="muted">0 patients</span></li></ul><span class="btn sec sm" style="margin-top:8px">New sequence</span></div>
+<div class="card">
+<div class="sec-h" style="font-size:15px">Missed appointment follow-up<span class="seg" style="font-weight:400"><span class="on">Active</span><span>Paused</span></span></div>
+<p class="muted rel" style="margin:0 0 12px"><i class="mk" style="left:-34px;top:-4px">2</i>Starts when: an appointment is marked <b>Did not attend</b></p>
+<ol class="timeline rel"><i class="mk" style="left:-34px;top:0">3</i>
+<li><span class="dot done">1</span><div><b>Same day</b>: text message to patient<br><span class="muted">"We missed you today. Please call 01738 473 000 to rebook." No clinical details.</span></div></li>
+<li><span class="dot done">2</span><div><b>After 2 days</b>, if not rebooked: phone call task for intake coordinator</div></li>
+<li><span class="dot done">3</span><div><b>After 5 days</b>, if not rebooked: letter to patient with a new appointment offer</div></li>
+<li><span class="dot done">4</span><div><b>After a second missed appointment</b>: email to responsible consultant</div></li></ol>
+<p class="muted rel" style="margin:0 0 12px"><i class="mk" style="left:-34px;top:-4px">4</i>Stops when: patient rebooks, is discharged, or is detained under the Mental Health Act</p>
+<span class="btn sm">+ Add step</span> <span class="btn sm rel">Save sequence<i class="mk" style="right:-12px;top:-16px">5</i></span></div></div></div></div></div><div class="statusbar"><span>Mentcare, Mid-Scotland Health Authority</span><span>Supported browser: Firefox. Service hours 08:00 to 18:30, Monday to Friday</span></div></div></div><p class="fig-cap">Figure 6. Set up automatic reminders and follow-up.</p><ol class="steps"><li>Choose a sequence from the list, or create a new one.</li><li>Check what starts the sequence, for example an appointment marked Did not attend.</li><li>Each step has a delay, a channel (text, letter, email, or a task for staff), and a message. Only channels the patient consented to are used; steps for other channels are skipped.</li><li>Check the stop conditions, so patients who have rebooked or are in hospital are not contacted.</li><li>Select <b>Save sequence</b> and set it to Active. The list shows how many patients are currently in each sequence.</li></ol></section><section class="screen" id="s7"><h3>7. Run group sessions and carer events</h3><p class="who"><b>Intake coordinator</b>, AO-09</p>
+<p class="prose">The service runs group sessions for patients, such as group CBT, and information evenings for carers and families. Staff create sessions here and manage who is registered. Carer events can be shared with a public registration link.</p><div class="frame-wrap"><div class="frame">
+<div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://mentcare.midscot-health.scot/intake/sessions</div></div>
+<div class="staff">
+<div class="side rel"><div class="wordmark"><span class="crest">M</span>Mentcare</div><a class="">Referral inbox</a><a class="">New patients</a><a class="">Outreach messages</a><a class="">Reminder sequences</a><a class="on">Sessions and events</a><a class="">Pipeline overview</a>
+<div class="foot">Signed in as<br><b style="color:#fff">Lorna Kerr</b><br>Intake coordinator</div></div>
+<div><div class="top"><h5>Sessions and events</h5><span class="who-pill"><span class="av">LK</span>Lorna Kerr</span></div><div class="body">
+<div class="grid2" style="grid-template-columns:1fr 1.35fr">
+<div class="card rel"><i class="mk" style="left:-12px;top:-12px">1</i><h4>New session</h4>
+<div class="fld" style="margin-top:10px"><span class="lbl">Name *</span><div class="in">Carer information evening</div></div>
+<div class="fld rel"><i class="mk" style="left:-34px;top:18px">2</i><span class="lbl">Type</span><div class="seg"><span>Group</span><span class="on">Carer event</span><span>Drop-in</span></div></div>
+<div class="row"><div class="fld"><span class="lbl">Date *</span><div class="in">15.10.2026</div></div><div class="fld"><span class="lbl">Time *</span><div class="in">18:30</div></div><div class="fld"><span class="lbl">Places</span><div class="in">30</div></div></div>
+<div class="fld"><span class="lbl">Where</span><div class="in">Perth Day Clinic, meeting room 2</div></div>
+<div class="chk"><span class="box on"></span><span>Allow registration through a public link</span></div><span class="btn">Create session</span></div>
+<div><div class="tbl rel"><i class="mk" style="left:-12px;top:-12px">3</i><table class="t"><tr><th>Session</th><th>Date</th><th>Registered</th></tr>
+<tr class="hl"><td><b>Carer information evening</b></td><td>15&nbsp;Oct</td><td>18 of 30</td></tr><tr><td><b>Group CBT for anxiety</b>, 6 weeks</td><td>From 7 Oct</td><td>8 of 8, 3 waiting</td></tr><tr><td><b>Friday drop-in</b></td><td>Weekly</td><td>Open</td></tr></table></div>
+<div class="card rel" style="margin-top:14px"><i class="mk" style="left:-12px;top:-12px">4</i><div class="sec-h">Carer information evening, 18 registered</div><div style="margin-bottom:10px"><span class="btn sec sm">Copy public link</span> <span class="btn sec sm">Message registrants</span></div>
+<table class="t"><tr><th>Name</th><th>Relation</th><th>Attended</th></tr><tr><td>Anne Buchanan</td><td>Carer</td><td><span class="box"></span></td></tr><tr><td>Eilidh Campbell</td><td>Carer</td><td><span class="box"></span></td></tr><tr><td>Ross Taylor</td><td>Family member</td><td><span class="box"></span></td></tr></table></div></div></div></div></div></div><div class="statusbar"><span>Mentcare, Mid-Scotland Health Authority</span><span>Supported browser: Firefox. Service hours 08:00 to 18:30, Monday to Friday</span></div></div></div><p class="fig-cap">Figure 7. Run group sessions and carer events.</p><ol class="steps"><li>Select <b>New session</b> and enter its name, date, time, number of places, and location.</li><li>Choose the type. Group therapy sessions are open only to referred patients; carer events can allow public registration.</li><li>The session list shows registrations against places. Full group sessions keep a waiting list.</li><li>Open a session to see who is registered, share the public link, message registrants, and record attendance on the day.</li></ol></section><section class="screen" id="s8"><h3>8. Referral pipeline overview</h3><p class="who"><b>Intake coordinator and health service managers</b>, AO-08; Mentcare 3.4, 6.2</p>
+<p class="prose">The pipeline overview shows how referrals move through admission: how many arrive, from where, how many are accepted, and how long patients wait for a first appointment. It contains totals only and no patient-identifiable information, so it can be included in management reports.</p><div class="frame-wrap"><div class="frame">
+<div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://mentcare.midscot-health.scot/intake/pipeline</div></div>
+<div class="staff">
+<div class="side rel"><div class="wordmark"><span class="crest">M</span>Mentcare</div><a class="">Referral inbox</a><a class="">New patients</a><a class="">Outreach messages</a><a class="">Reminder sequences</a><a class="">Sessions and events</a><a class="on">Pipeline overview</a>
+<div class="foot">Signed in as<br><b style="color:#fff">Lorna Kerr</b><br>Intake coordinator</div></div>
+<div><div class="top"><h5>Referral pipeline, September 2026</h5><span class="who-pill"><span class="btn sec sm">Add to monthly report</span></span></div><div class="body">
+<div class="card rel"><i class="mk" style="left:-12px;top:-12px">1</i><h4>From referral to first appointment</h4>
+<div class="barrow" style="grid-template-columns:200px 1fr 40px"><span>Referrals received</span><span class="track"><i style="width:100%;background:#1F3F66"></i></span><b>64</b></div>
+<div class="barrow" style="grid-template-columns:200px 1fr 40px"><span>Triaged</span><span class="track"><i style="width:91%;background:#2E5A8A"></i></span><b>58</b></div>
+<div class="barrow" style="grid-template-columns:200px 1fr 40px"><span>Accepted and admitted</span><span class="track"><i style="width:77%;background:#2D5B8C"></i></span><b>49</b></div>
+<div class="barrow" style="grid-template-columns:200px 1fr 40px"><span>Attended first appointment</span><span class="track"><i style="width:64%;background:#1D5A3E"></i></span><b>41</b></div></div>
+<div class="grid3" style="margin-top:16px">
+<div class="card rel"><i class="mk" style="left:-12px;top:-12px">2</i><h4>By source</h4><div class="barrow" style="grid-template-columns:80px 1fr 28px"><span>GP</span><span class="track"><i style="width:100%;background:#1F3F66"></i></span><b>38</b></div><div class="barrow" style="grid-template-columns:80px 1fr 28px"><span>A&amp;E</span><span class="track"><i style="width:45%;background:#1F3F66"></i></span><b>17</b></div><div class="barrow" style="grid-template-columns:80px 1fr 28px"><span>Hospital</span><span class="track"><i style="width:24%;background:#1F3F66"></i></span><b>9</b></div></div>
+<div class="card rel"><i class="mk" style="left:-12px;top:-12px">3</i><h4>Average wait to first appointment</h4><ul class="list"><li><span class="chip c-hi">Urgent</span> 5 days</li><li><span class="chip c-med">Soon</span> 16 days</li><li><span class="chip c-lo">Routine</span> 34 days</li></ul></div>
+<div class="card rel"><i class="mk" style="left:-12px;top:-12px">4</i><h4>Outreach</h4><ul class="list"><li>First appointments missed: <b>8</b></li><li>Rebooked after follow-up: <b>6</b></li><li>Carer event registrations: <b>41</b></li></ul></div></div></div></div></div><div class="statusbar"><span>Mentcare, Mid-Scotland Health Authority</span><span>Supported browser: Firefox. Service hours 08:00 to 18:30, Monday to Friday</span></div></div></div><p class="fig-cap">Figure 8. Referral pipeline overview.</p><ol class="steps"><li>The funnel shows how many referrals reached each stage this month.</li><li>Referrals by source show where patients are coming from.</li><li>Average waiting time from referral to first appointment is shown for each priority.</li><li>Outreach figures show missed first appointments, how many were rebooked after follow-up, and carer event registrations. Select <b>Add to monthly report</b> to include these figures in the management reports.</li></ol></section><h2 class="part">People outside the service</h2><p class="prose">What referrers, patients and carers see.</p><section class="screen" id="s9"><h3>9. What referrers, patients and carers receive</h3><p class="who"><b>Referrer, patient and carer</b>, AO-01, AO-06, AO-07, AO-09</p>
+<p class="prose">People outside the service see Admissions and Outreach through messages and simple web pages. Referrers follow their referrals online, patients receive letters and text reminders, and carers can register for information evenings.</p><div class="frame-wrap"><div class="frame">
+<div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://mentcare.midscot-health.scot/preview</div></div>
+<div class="body" style="background:#E6EAEF;display:grid;grid-template-columns:1.1fr .8fr 1fr;gap:20px;align-items:start">
+<div class="card rel"><i class="mk" style="left:-12px;top:-12px">1</i><h4>My referrals</h4><p class="sub">Dr Sarah Ahmed, Tay Street Medical Practice</p>
+<table class="t"><tr><th>Patient</th><th>Sent</th><th>Status</th></tr><tr><td>Rory Buchanan</td><td>27&nbsp;Sep</td><td><span class="chip c-acc">Accepted</span></td></tr><tr><td>Graham Hay</td><td>23&nbsp;Sep</td><td><span class="chip c-sub">Received</span></td></tr><tr><td>Iona Park</td><td>15&nbsp;Sep</td><td><span class="chip c-rev">More info needed</span></td></tr></table></div>
+<div class="rel" style="background:#1d1f22;border-radius:26px;padding:12px"><i class="mk" style="left:-12px;top:-12px">2</i><div style="background:#fff;border-radius:16px;padding:14px;min-height:260px"><p class="muted" style="text-align:center;margin:0 0 10px;font-size:11px">Text message, 7 Oct 14:00</p>
+<div style="background:#E8EEF6;border-radius:12px;padding:10px;font-size:12.5px">Perth Day Clinic: reminder of your appointment tomorrow, Thu 8 Oct at 14:00. To rebook call 01738 473 000.</div></div></div>
+<div class="card rel"><i class="mk" style="left:-12px;top:-12px">3</i><h4>Carer information evening</h4><p class="sub">Thu 15 Oct 2026, 18:30. Perth Day Clinic, meeting room 2. 12 places left.</p>
+<div class="fld"><span class="lbl">Your name</span><div class="in">Anne Buchanan</div></div><div class="fld"><span class="lbl">Email or phone</span><div class="in">01738 552 190</div></div><span class="btn">Register</span></div></div></div></div><p class="fig-cap">Figure 9. What referrers, patients and carers receive.</p><ol class="steps"><li>Referrers see the status of each referral they sent: Received, Under review, More info needed, Accepted, or Redirected.</li><li>Patients receive letters and text reminders from their clinic. Texts only contain appointment details, never diagnoses or treatment.</li><li>Carers and family members register for information evenings through the public link, without needing an account.</li></ol></section>
+</main></div>
+<script>(function(){var t=document.getElementById('mktoggle');try{if(localStorage.getItem('ao-mk')==='off'){t.checked=false;document.body.classList.add('nomk');}}catch(e){}
+t.addEventListener('change',function(){document.body.classList.toggle('nomk',!t.checked);try{localStorage.setItem('ao-mk',t.checked?'on':'off');}catch(e){}});})();</script>
+</body></html>

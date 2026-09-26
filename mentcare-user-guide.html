@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>User's Guide: Mentcare Patient Information System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>
+/* Guide chrome tokens (theme-aware). Product mockups keep their own fixed light UI palette below. */
+:root{
+  --bg:#F7F8F6; --surface:#FFFFFF; --ink:#1B2420; --muted:#5B6863; --rule:#DCE2DE;
+  --brand:#1F3F66; --accent:#B7811A; --mk:#B7811A; --mk-ink:#fff;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#131A17; --surface:#1B2420; --ink:#E7ECE9; --muted:#9AA8A2; --rule:#2E3A35;
+    --brand:#8DB4DE; --accent:#E0AE4B;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#131A17; --surface:#1B2420; --ink:#E7ECE9; --muted:#9AA8A2; --rule:#2E3A35;
+  --brand:#8DB4DE; --accent:#E0AE4B;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px); scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Public Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:16px;line-height:1.55}
+a{color:var(--brand)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Layout */
+.layout{display:grid;grid-template-columns:250px minmax(0,1fr);max-width:1400px;margin:0 auto}
+nav.toc{position:sticky;top:env(safe-area-inset-top,0px);height:100vh;overflow:auto;padding:28px 20px;border-right:1px solid var(--rule);font-size:14px}
+nav.toc h2{font-family:"Source Serif 4",Georgia,serif;font-size:17px;margin:0 0 4px}
+nav.toc p{margin:0 0 18px;color:var(--muted);font-size:13px}
+nav.toc h3{font-size:13px;color:var(--muted);font-weight:600;margin:18px 0 6px}
+nav.toc ul{list-style:none;margin:0;padding:0}
+nav.toc li a{display:block;padding:4px 8px;border-radius:6px;text-decoration:none;color:var(--ink)}
+nav.toc li a:hover{background:var(--rule)}
+.toggle{margin-top:22px;display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
+main{padding:40px 48px 120px;min-width:0}
+.prose{max-width:74ch}
+@media (max-width:900px){.layout{grid-template-columns:1fr} nav.toc{position:static;height:auto;border-right:0;border-bottom:1px solid var(--rule)} main{padding:28px 18px 80px}}
+
+/* Hero: the admissions path */
+.hero{padding:8px 0 36px;border-bottom:1px solid var(--rule);margin-bottom:40px}
+.hero .kicker{color:var(--muted);font-size:15px;margin:0 0 10px}
+.hero h1{font-family:"Source Serif 4",Georgia,serif;font-weight:700;font-size:clamp(34px,4.6vw,56px);line-height:1.05;margin:0 0 26px;letter-spacing:-.01em;max-width:18ch}
+.path{display:flex;flex-wrap:wrap;align-items:center;gap:0;margin:0 0 26px;padding:0;list-style:none;counter-reset:p}
+.path li{font-family:"Source Serif 4",Georgia,serif;font-size:clamp(18px,2.1vw,26px);font-weight:600;display:flex;align-items:center}
+.path li:not(:last-child)::after{content:"";display:inline-block;width:38px;height:2px;background:var(--accent);margin:0 12px}
+.path li.alt{color:var(--muted);font-weight:400}
+.meta-row{display:flex;flex-wrap:wrap;gap:6px 28px;font-size:14px;color:var(--muted)}
+.meta-row strong{color:var(--ink);font-weight:600}
+
+h2.part{font-family:"Source Serif 4",Georgia,serif;font-size:32px;margin:64px 0 8px;line-height:1.15}
+h2.part + p{color:var(--muted);margin-top:0}
+.screen{margin:48px 0 0;padding-top:8px}
+.screen h3{font-family:"Source Serif 4",Georgia,serif;font-size:25px;margin:0 0 4px}
+.screen .who{font-size:14px;color:var(--muted);margin:0 0 12px}
+.screen .who b{color:var(--accent);font-weight:600}
+.fig-cap{font-size:13px;color:var(--muted);margin:8px 0 14px}
+ol.steps{max-width:74ch;padding-left:0;list-style:none;counter-reset:s;margin:14px 0 0}
+ol.steps li{counter-increment:s;position:relative;padding-left:38px;margin:0 0 9px}
+ol.steps li::before{content:counter(s);position:absolute;left:0;top:1px;width:24px;height:24px;border-radius:50%;background:var(--mk);color:var(--mk-ink);font-size:13px;font-weight:700;display:grid;place-items:center}
+.note{max-width:74ch;border-left:3px solid var(--accent);padding:6px 14px;margin:14px 0;color:var(--ink);background:var(--surface)}
+
+table.ref{border-collapse:collapse;font-size:14px;width:100%;min-width:640px}
+table.ref th,table.ref td{border-bottom:1px solid var(--rule);padding:9px 10px;text-align:left;vertical-align:top}
+table.ref th{font-weight:600;color:var(--muted)}
+.scroll{overflow-x:auto;max-width:100%}
+td.y{color:var(--brand);font-weight:700;text-align:center}
+td.n{color:var(--muted);text-align:center}
+
+/* ---------- Product mockups (fixed light product palette) ---------- */
+.frame{--u-bg:#F4F6F5;--u-surf:#fff;--u-ink:#18211D;--u-mut:#5F6D67;--u-line:#DDE3E0;--u-brand:#1F3F66;--u-brand-2:#2E5A8A;--u-gold:#B7811A;--u-red:#B3372B;--u-blue:#2D5B8C;
+  border:1px solid #C9D1CD;border-radius:10px;overflow:hidden;background:var(--u-bg);color:var(--u-ink);font-size:13px;line-height:1.45;min-width:980px;box-shadow:0 1px 0 rgba(0,0,0,.04),0 12px 30px -18px rgba(20,40,30,.35)}
+.frame-wrap{overflow-x:auto;max-width:100%;padding:6px 14px 10px 14px;margin:0 -14px}
+.bar{display:flex;align-items:center;gap:10px;background:#E6EAE8;padding:8px 12px;border-bottom:1px solid #D0D8D4}
+.dots{display:flex;gap:6px}.dots i{width:10px;height:10px;border-radius:50%;background:#C3CBC7;display:block}
+.url{flex:1;background:#fff;border-radius:6px;padding:4px 10px;color:#56645E;font-size:12px}
+.pubnav{display:flex;align-items:center;gap:22px;background:var(--u-brand);color:#fff;padding:14px 26px}
+.wordmark{font-family:"Source Serif 4",Georgia,serif;font-size:18px;font-weight:700;margin-right:auto;display:flex;align-items:center;gap:10px}
+.crest{width:26px;height:26px;border-radius:5px;background:#fff;color:var(--u-brand);display:grid;place-items:center;font-size:14px;font-weight:700}
+.pubnav a{color:#D6E2EF;text-decoration:none}
+.pubnav a.on{color:#fff;font-weight:600;border-bottom:2px solid var(--u-gold);padding-bottom:2px}
+.pubnav .btn-ghost{border:1px solid rgba(255,255,255,.5);border-radius:6px;padding:5px 12px;color:#fff}
+.body{padding:26px}
+.grid2{display:grid;grid-template-columns:1.4fr 1fr;gap:22px}
+.grid2>*,.grid3>*{min-width:0}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{background:var(--u-surf);border:1px solid var(--u-line);border-radius:8px;padding:18px;position:relative}
+.card h4{margin:0 0 4px;font-size:16px}
+.card .sub{color:var(--u-mut);margin:0 0 14px}
+.card h4.ui-h,.ui-h{font-family:"Source Serif 4",Georgia,serif;font-size:24px;margin:0 0 4px}
+.lbl{display:block;font-weight:600;margin:0 0 4px;font-size:12.5px}
+.lbl small{font-weight:400;color:var(--u-mut)}
+.fld{margin:0 0 13px;position:relative}
+.in{border:1px solid #C5CEC9;border-radius:6px;background:#fff;padding:8px 10px;min-height:35px;color:var(--u-ink)}
+.in.ph{color:#98A39E}
+.in.sel{display:flex;justify-content:space-between}
+.in.sel::after{content:"▾";color:var(--u-mut)}
+.in.area{min-height:70px}
+.in.err{border-color:var(--u-red);box-shadow:0 0 0 2px #F3D6D2}
+.errtxt{color:var(--u-red);font-size:12px;margin-top:4px}
+.row{display:flex;gap:12px}.row>*{flex:1}
+.chk{display:flex;gap:8px;align-items:flex-start;margin:4px 0 14px}
+.box{display:inline-block;width:16px;height:16px;border:1.5px solid #9AA6A0;border-radius:3px;flex:none;margin-top:1px;background:#fff}
+.box.on{background:var(--u-brand);border-color:var(--u-brand);position:relative}
+.box.on::after{content:"";position:absolute;left:4px;top:1px;width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.btn{white-space:nowrap;display:inline-flex;align-items:center;gap:6px;background:var(--u-brand);color:#fff;border-radius:6px;padding:8px 16px;font-weight:600;border:1px solid var(--u-brand)}
+.btn.sec{background:#fff;color:var(--u-brand)}
+.btn.sm{padding:5px 10px;font-size:12px}
+.btn.gold{background:var(--u-gold);border-color:var(--u-gold)}
+.toast{border-radius:7px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start}
+.toast.ok{background:#E3F1EA;border:1px solid #A9D1BD;color:#1D4A36}
+.toast.bad{background:#FBE9E6;border:1px solid #EDB9B1;color:#7E241A}
+.toast.info{background:#E7EEF6;border:1px solid #B8CCE2;color:#23476D}
+.muted{color:var(--u-mut)}
+.chip{display:inline-block;border-radius:999px;padding:2px 9px;font-size:11.5px;font-weight:600;white-space:nowrap}
+.c-sub{background:#E7EEF6;color:#23476D}.c-rev{background:#FBF1DC;color:#7A5410}.c-acc{background:#E0F0E7;color:#1D5A3E}.c-rej{background:#F6E1DE;color:#8A2A20}
+.c-hi{background:#F6E1DE;color:#8A2A20}.c-med{background:#FBF1DC;color:#7A5410}.c-lo{background:#EDF0EE;color:#4F5C56}
+table.t{width:100%;border-collapse:collapse;background:#fff}
+table.t th{font-size:11.5px;color:var(--u-mut);font-weight:600;text-align:left;padding:9px 10px;border-bottom:1px solid var(--u-line);background:#FAFBFA}
+table.t td{padding:9px 10px;border-bottom:1px solid #EEF1EF;vertical-align:middle}
+table.t tr.hl td{background:#EEF3FA}
+.tbl{border:1px solid var(--u-line);border-radius:8px;position:relative;background:#fff}
+.tbl table.t{background:transparent}.tbl table.t th{background:transparent}
+/* Staff shell */
+.staff{display:grid;grid-template-columns:200px 1fr;min-height:520px}
+.side{background:#16283F;color:#D3DEEA;padding:18px 12px}
+.side .wordmark{color:#fff;font-size:15px;margin-bottom:22px}
+.side .crest{width:22px;height:22px;font-size:12px}
+.side a{display:flex;justify-content:space-between;padding:8px 10px;border-radius:6px;color:#D3DEEA;text-decoration:none;margin-bottom:2px}
+.side a.on{background:#27415F;color:#fff;font-weight:600}
+.side .cnt{background:#B7811A;color:#fff;border-radius:999px;font-size:11px;padding:0 7px}
+.side .foot{margin-top:28px;border-top:1px solid #2A3F5A;padding-top:14px;font-size:12px;color:#9FB2C8}
+.top{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:#fff;border-bottom:1px solid var(--u-line)}
+.top h5{margin:0;font-size:18px;font-family:"Source Serif 4",Georgia,serif}
+.who-pill{display:flex;align-items:center;gap:8px;color:var(--u-mut)}
+.av{width:28px;height:28px;border-radius:50%;background:#D9E4F0;color:var(--u-brand);display:grid;place-items:center;font-weight:700;font-size:12px}
+.stat{font-family:"Source Serif 4",Georgia,serif;font-size:34px;font-weight:700;line-height:1;margin:4px 0}
+.barrow{display:grid;grid-template-columns:100px 1fr 34px;gap:10px;align-items:center;margin:8px 0}
+.track{height:12px;background:#EEF1EF;border-radius:3px;overflow:hidden}.track i{display:block;height:100%}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--u-line);margin-bottom:14px}
+.tabs span{padding:8px 12px;color:var(--u-mut);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs span.on{color:var(--u-ink);font-weight:600;border-color:var(--u-brand)}
+.toolbar{display:flex;gap:10px;align-items:center;margin-bottom:12px;position:relative}
+.toolbar .in{min-width:0;flex:1}
+.drop{border:1.5px dashed #9FB3A9;border-radius:8px;padding:14px;background:#F6F9FC;text-align:center;color:var(--u-mut)}
+.file{display:flex;align-items:center;gap:10px;border:1px solid var(--u-line);border-radius:7px;padding:9px 11px;background:#fff;margin-top:8px}
+.ficon{width:30px;height:36px;border-radius:4px;background:#F6E1DE;color:#8A2A20;display:grid;place-items:center;font-size:10px;font-weight:700}
+.timeline{list-style:none;margin:0;padding:0}
+.timeline li{display:grid;grid-template-columns:26px 1fr;gap:12px;padding-bottom:18px;position:relative}
+.timeline li::before{content:"";position:absolute;left:12px;top:24px;bottom:0;width:2px;background:var(--u-line)}
+.timeline li:last-child::before{display:none}
+.dot{width:26px;height:26px;border-radius:50%;border:2px solid var(--u-line);background:#fff;display:grid;place-items:center;font-size:12px;font-weight:700}
+.dot.done{background:var(--u-brand);border-color:var(--u-brand);color:#fff}
+.dot.now{border-color:var(--u-gold);color:var(--u-gold)}
+.docview{background:#E9EDEB;border-radius:8px;padding:16px;height:300px;position:relative}
+.page{background:#fff;width:74%;margin:0 auto;height:100%;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.08);font-size:10px;color:#555}
+.page .ln{height:6px;background:#E5E9E7;border-radius:2px;margin:7px 0}
+.code{background:#15202E;color:#D5E7DE;border-radius:8px;padding:14px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;white-space:pre;overflow:auto;line-height:1.5}
+.code .k{color:#E0B45A}.code .s{color:#9FD3B8}
+.evcard{border:1px solid var(--u-line);border-radius:8px;background:#fff;position:relative}
+.evdate{border-radius:7px 7px 0 0;background:#E8EEF6;padding:12px 14px;display:flex;gap:12px;align-items:center}
+.evdate b{font-family:"Source Serif 4",Georgia,serif;font-size:26px;color:var(--u-brand);line-height:1}
+.evbody{padding:12px 14px}
+.evcard.sel{outline:2px solid var(--u-gold)}
+.seg{display:inline-flex;border:1px solid #C5CEC9;border-radius:6px;overflow:hidden}
+.seg span{padding:6px 12px;background:#fff;white-space:nowrap}.seg span.on{background:var(--u-brand);color:#fff}
+.sso{max-width:380px;margin:30px auto;background:#fff;border:1px solid var(--u-line);border-radius:10px;padding:26px;position:relative}
+
+/* Step markers */
+.mk{position:absolute;z-index:3;width:24px;height:24px;border-radius:50%;background:var(--mk,#B7811A);color:#fff;font:700 12px/24px "Public Sans",sans-serif;text-align:center;box-shadow:0 0 0 3px rgba(255,255,255,.9),0 2px 6px rgba(0,0,0,.25);font-style:normal}
+.frame .mk{--mk:#B7811A}
+body.nomk .mk{display:none}
+.rel{position:relative}
+
+@media print{nav.toc{display:none}.layout{display:block}.screen{break-inside:avoid}.frame{min-width:0}}
+
+.pbanner{display:flex;flex-wrap:wrap;align-items:center;gap:8px 22px;background:#fff;border-bottom:1px solid var(--u-line);padding:12px 24px;position:relative}
+.pbanner .nm{font-family:"Source Serif 4",Georgia,serif;font-size:19px;font-weight:700}
+.pbanner .kv{color:var(--u-mut);font-size:12px}.pbanner .nm{white-space:nowrap}.pbanner .kv b{white-space:nowrap;display:block;color:var(--u-ink);font-size:13px}
+.risk{display:inline-flex;align-items:center;gap:6px;background:#B3372B;color:#fff;border-radius:6px;padding:5px 10px;font-weight:700;font-size:12px}
+.risk.med{background:#B7811A}.risk.low{background:#5F6D67}
+.stale{background:#FBF1DC;border-bottom:1px solid #EACB8C;color:#6E4C0E;padding:8px 24px;display:flex;gap:10px;align-items:center}
+.sec-h{font-weight:700;font-size:13px;margin:0 0 8px;display:flex;justify-content:space-between;align-items:center}
+.list{margin:0;padding:0;list-style:none}.list li{padding:7px 0;border-bottom:1px solid #EEF1EF}.list li:last-child{border:0}
+.modal{background:#fff;border:1px solid #D9B0A9;border-top:4px solid #B3372B;border-radius:8px;padding:16px;box-shadow:0 14px 30px -12px rgba(0,0,0,.35);position:relative}
+.spin{width:14px;height:14px;border:2px solid #B8CCE2;border-top-color:#23476D;border-radius:50%;display:inline-block}
+.cnt-note{font-size:11px;color:var(--u-mut);text-align:right;margin-top:3px}
+.letter{background:#fff;border:1px solid var(--u-line);border-radius:4px;padding:18px 22px;font-family:"Source Serif 4",Georgia,serif;font-size:12.5px;line-height:1.55;box-shadow:0 2px 8px rgba(0,0,0,.06);position:relative}
+.pill{display:inline-block;border:1px solid var(--u-line);border-radius:999px;padding:3px 10px;margin:0 6px 6px 0;background:#fff}
+.pill.on{background:#E8EEF6;border-color:#9DB5D3;font-weight:600}
+.statusbar{display:flex;justify-content:space-between;background:#EEF2F6;border-top:1px solid var(--u-line);padding:6px 16px;font-size:11.5px;color:var(--u-mut)}
+.side a{font-size:12.5px;align-items:center}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="Guide contents"><h2>User's Guide</h2><p>Mentcare patient information system</p>
+<ul><li><a href="admissions-outreach-user-guide.html">Team 4 block guide</a></li><li><a href="#overview">System overview</a></li><li><a href="#roles">Users and access</a></li><li><a href="#general">Working with Mentcare</a></li></ul><h3>All staff</h3><ul><li><a href="#s1">1. Sign in</a></li><li><a href="#s2">2. Find a patient</a></li></ul><h3>Clinical staff</h3><ul><li><a href="#s3">3. View a patient record</a></li><li><a href="#s4">4. Record a consultation</a></li><li><a href="#s5">5. Prescribe medication</a></li><li><a href="#s6">6. Record risk and self-harm incidents</a></li><li><a href="#s7">7. Print selected parts of a record</a></li><li><a href="#s8">8. Take records on a home visit</a></li></ul><h3>Clinic administrators</h3><ul><li><a href="#s9">9. Manage clinic appointments and daily lists</a></li><li><a href="#s10">10. Prepare repeat prescriptions</a></li><li><a href="#s11">11. Set up a meeting about a patient</a></li><li><a href="#s12">12. Define and generate management reports</a></li></ul><h3>Health service managers</h3><ul><li><a href="#s13">13. Read a management report</a></li></ul><h3>MHA administrator</h3><ul><li><a href="#s14">14. Manage detention reviews</a></li></ul><h3>Records and system admin</h3><ul><li><a href="#s15">15. Manage roles and permissions</a></li><li><a href="#s16">16. Handle patient information requests and deaths</a></li><li><a href="#s17">17. Create anonymised reports for research</a></li></ul><h3>Patients (planned)</h3><ul><li><a href="#s18">18. Request my information or a correction</a></li></ul><h3>Admissions and outreach</h3><ul><li><a href="#s19">19. Send a referral</a></li><li><a href="#s20">20. Triage a referral and decide</a></li><li><a href="#s21">21. Admit the patient: create the record and first appointment</a></li></ul>
+<label class="toggle"><input type="checkbox" id="mktoggle" checked> Show step markers on screens</label></nav>
+<main>
+<header class="hero" id="overview"><p class="kicker">Phase I, User's Guide and Walkthrough</p>
+<h1>Mentcare patient information system</h1>
+<ol class="path" aria-label="Patient care cycle"><li>Referral</li><li>Consultation</li><li>Treatment</li><li>Monitoring</li><li class="alt">Anonymised reports</li></ol>
+<div class="meta-row"><span><strong>Customer:</strong> Mid-Scotland Regional Health Authority</span><span><strong>Team 4:</strong> Bogdan Borachuk, Lev Lavryniuk, Antonii Maltsev</span><span><strong>Access:</strong> web browser (Firefox), client-server</span></div></header>
+
+<section class="prose"><h2 class="part" style="margin-top:0">System overview</h2>
+<p>Mentcare is a patient information system that supports the care of people with mental health problems across the health authority's day clinics. It has two goals: to give clinical staff a better record of each patient's diagnoses, treatments, and consultations, and to give health service managers better information about mental health care in the region.</p>
+<p>Clinicians use Mentcare during consultations to read and update patient records, prescribe medication with safety checks, and record risk. Clinic administrators manage attendance, repeat prescriptions, staff meetings, and management reports. The Mental Health Act administrator tracks patients detained without consent and makes sure legally required reviews and letters happen on time. The medical records office controls access, handles patients' requests about their data, and produces anonymised reports for research.</p>
+<p>Mentcare is not a complete medical record; it holds only mental health information. It works with the health authority's existing systems: single sign-on for authentication, the drug information system for drug details and costs, the PRESCRIPTION system for printing prescriptions, the APPOINTMENTS system for bookings, and the national summary patient record.</p>
+<p>Mentcare is built in blocks by five teams and assembled into one system at the end of the semester. Team 4 builds the Admissions and Outreach block: referrals, triage, admission with a first appointment, and outreach to patients and carers. This guide describes the whole system from every user's point of view; screens 19 to 21 belong to the Team 4 block, which has its own <a href="admissions-outreach-user-guide.html">detailed guide</a>.</p>
+<p>Screens in this guide are mockups of the planned product; all names and figures are sample data. The numbered markers on each screen match the numbered steps below it.</p></section>
+
+<section id="roles"><h2 class="part">Users and access</h2>
+<p class="prose">Access is role-based. Each user sees only what their role allows; in particular, administrators do not see clinical details and managers never see individual patient records.</p>
+<div class="scroll"><table class="ref"><thead><tr><th>Feature</th><th>Clinical staff</th><th>Administrator</th><th>MHA administrator</th><th>Medical records / system admin</th><th>Manager</th></tr></thead><tbody><tr><td>Referrals, admission, outreach (Team 4)</td><td class="y">Triage</td><td class="y">Admits, sends outreach</td><td class="n">No</td><td class="n">No</td><td class="y">Pipeline figures</td></tr><tr><td>Search and open patient records</td><td class="y">Yes</td><td class="y">Personal details only</td><td class="y">MHA details</td><td class="y">Yes</td><td class="n">No</td></tr><tr><td>Record consultations, diagnoses, referrals</td><td class="y">Yes</td><td class="n">No</td><td class="n">No</td><td class="n">No</td><td class="n">No</td></tr><tr><td>Prescribe medication</td><td class="y">Yes</td><td class="y">Repeats, for signature</td><td class="n">No</td><td class="n">No</td><td class="n">No</td></tr><tr><td>Risk assessment and warning letters</td><td class="y">Yes</td><td class="n">No</td><td class="y">Receives warnings</td><td class="n">No</td><td class="n">No</td></tr><tr><td>Appointments, attendance, daily lists</td><td class="y">Receives lists</td><td class="y">Yes</td><td class="n">No</td><td class="n">No</td><td class="n">No</td></tr><tr><td>Staff meetings about a patient</td><td class="y">Attends</td><td class="y">Sets up</td><td class="y">Attends</td><td class="n">No</td><td class="n">No</td></tr><tr><td>Management reports</td><td class="n">No</td><td class="y">Defines and generates</td><td class="n">No</td><td class="n">No</td><td class="y">Receives</td></tr><tr><td>Detention reviews and letters</td><td class="y">Assesses</td><td class="n">No</td><td class="y">Yes</td><td class="n">No</td><td class="n">No</td></tr><tr><td>Roles, permissions, registered PCs</td><td class="n">No</td><td class="n">No</td><td class="n">No</td><td class="y">Yes</td><td class="n">No</td></tr><tr><td>Patient requests, deaths, anonymised reports</td><td class="n">No</td><td class="n">No</td><td class="n">No</td><td class="y">Yes</td><td class="n">No</td></tr></tbody></table></div></section>
+
+<section id="general" class="prose"><h2 class="part">Working with Mentcare</h2>
+<p>Mentcare runs in the Firefox web browser and is available during clinic hours, 08:00 to 18:30 Monday to Friday; planned maintenance happens in the evenings and on Sunday mornings. Wherever possible, choices are made from menus of allowed values, such as the list of known conditions and the approved medication list. Typed input is checked, and if something is rejected the screen explains why. Free-text fields show how many characters are left. Queries about a patient normally respond within two seconds; if one takes longer, a progress message is shown. Forms are filled in with information Mentcare already holds so staff do not have to type it again.</p></section>
+
+<h2 class="part">All staff</h2><p class="prose">Every user signs in through the health authority's single sign-on and can search for patients, subject to the permissions of their role.</p>
+<section class="screen" id="s1"><h3>1. Sign in</h3><p class="who"><b>All users</b>, operational constraint 1.4.3</p>
+<p class="prose">Mentcare uses the Mid-Scotland Health Authority single sign-on. Sign-in has two factors: a username and password, followed by the answer to one of the user's personal security questions. Sign-in is only accepted from PCs registered with the Mentcare server.</p><div class="frame-wrap"><div class="frame">
+<div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://mentcare.midscot-health.scot/signin</div></div>
+<div class="body" style="background:#EDF1F6;display:grid;grid-template-columns:1fr 1fr;gap:26px;padding:34px 60px">
+<div class="sso" style="margin:0;max-width:none"><i class="mk" style="left:-12px;top:-12px">1</i>
+<div class="wordmark" style="color:var(--u-brand);margin-bottom:4px"><span class="crest" style="background:var(--u-brand);color:#fff">M</span>Mid-Scotland Health Authority</div>
+<p class="muted" style="margin:0 0 16px">Sign in to <b style="color:var(--u-ink)">Mentcare</b>. Step 1 of 2</p>
+<div class="fld"><span class="lbl">Username</span><div class="in">efraser</div></div>
+<div class="fld"><span class="lbl">Password</span><div class="in">••••••••••••</div></div>
+<span class="btn" style="width:100%;justify-content:center">Continue</span></div>
+<div class="sso" style="margin:0;max-width:none"><i class="mk" style="left:-12px;top:-12px">2</i>
+<div class="wordmark" style="color:var(--u-brand);margin-bottom:4px"><span class="crest" style="background:var(--u-brand);color:#fff">M</span>Mid-Scotland Health Authority</div>
+<p class="muted" style="margin:0 0 16px">Step 2 of 2. Answer your security question</p>
+<div class="fld"><span class="lbl">What was the name of your first school?</span><div class="in">••••••••</div></div>
+<span class="btn" style="width:100%;justify-content:center">Sign in</span>
+<div class="toast bad rel" style="margin-top:14px"><i class="mk" style="left:-34px;top:6px">3</i><b>!</b><div>This PC is not registered for Mentcare access. Contact your system administrator.</div></div></div></div><div class="statusbar"><span>Mentcare, Mid-Scotland Health Authority</span><span>Supported browser: Firefox. Service hours 08:00 to 18:30, Monday to Friday</span></div></div></div><p class="fig-cap">Figure 1. Sign in.</p><ol class="steps"><li>Enter your health authority username and password and select <b>Continue</b>.</li><li>Answer the personal security question shown and select <b>Sign in</b>. Mentcare opens on the home screen for your role.</li><li>If the PC you are using is not registered with the server, sign-in is refused with this message. Registered PCs are managed by system administrators (screen 16).</li></ol></section>
+<section class="screen" id="s2"><h3>2. Find a patient</h3><p class="who"><b>All staff with patient access</b>, requirements 2.7, 2.2.1, 2.2.2, 3.1.1</p>
+<p class="prose">The search finds a patient record by name or by national health (NHS) number. Results show enough detail to pick the right person. If a search takes longer than two seconds, a progress indicator appears so the user knows the system is still working. Clinical staff can also create a new record from here.</p><div class="frame-wrap"><div class="frame">
+<div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://mentcare.midscot-health.scot/patients</div></div>
+<div class="staff">
+<div class="side rel"><div class="wordmark"><span class="crest">M</span>Mentcare</div><a class="on">Find a patient</a><a class="">Today's clinic</a><a class="">Home visits</a>
+<div class="foot">Signed in as<br><b style="color:#fff">Dr Ewan Fraser</b><br>Clinical staff</div></div>
+<div><div class="top"><h5>Find a patient</h5><span class="who-pill"><span class="av">EF</span>Dr Ewan Fraser</span></div><div class="body">
+<div class="toolbar"><i class="mk" style="left:-34px;top:4px">1</i><div class="seg"><span class="on">Name</span><span>NHS number</span></div><div class="in">Campbell</div><span class="btn">Search</span><span class="btn sec rel" style="margin-left:auto">Create patient record<i class="mk" style="right:-12px;top:-16px">4</i></span></div>
+<div class="toast info rel" style="margin-bottom:12px"><i class="mk" style="left:-34px;top:6px">2</i><span class="spin"></span><div>Searching all clinics. This is taking longer than usual.</div></div>
+<div class="tbl rel"><i class="mk" style="left:-12px;top:-12px">3</i><table class="t"><tr><th>Name</th><th>NHS number</th><th>Date of birth</th><th>Postcode</th><th>Last seen</th><th></th></tr>
+<tr class="hl"><td><b>Morag Campbell</b></td><td>485 777 3456</td><td>12 Apr 1986</td><td>PH1 5</td><td>18 Sep 2026, Perth day clinic</td><td><span class="risk" style="font-size:11px;padding:2px 8px">High risk</span></td></tr>
+<tr><td><b>Morag Campbell</b></td><td>612 340 9981</td><td>03 Nov 1951</td><td>FK8 2</td><td>02 Jun 2025, Stirling</td><td></td></tr>
+<tr><td><b>Neil Campbell</b></td><td>No NHS number, ID MC-000781</td><td>27 Jan 1994</td><td>No fixed address</td><td>21 Sep 2026, Perth day clinic</td><td></td></tr></table></div></div></div></div><div class="statusbar"><span>Mentcare, Mid-Scotland Health Authority</span><span>Supported browser: Firefox. Service hours 08:00 to 18:30, Monday to Friday</span></div></div></div><p class="fig-cap">Figure 2. Find a patient.</p><ol class="steps"><li>Choose whether to search by name or NHS number, type the value, and select <b>Search</b>.</li><li>If the search takes more than two seconds, a progress message appears until results are shown.</li><li>Check the date of birth and postcode to pick the right patient, then select the row to open the record. Records of patients with a history of deliberate self-harm are marked with a red risk label.</li><li>If the patient has no record, select <b>Create patient record</b>. If they do not have or know their NHS number, Mentcare generates a unique patient ID instead (as for Neil Campbell).</li></ol></section>
+<h2 class="part">Clinical staff</h2><p class="prose">Doctors, nurses and other clinicians use Mentcare during consultations to read and update patient records. Outside consultations they can open records in read-only mode.</p>
+<section class="screen" id="s3"><h3>3. View a patient record</h3><p class="who"><b>Clinical staff</b>, requirements 3.1.1, 3.1.3, 3.1.9, 3.1.10, 3.1.12, 3.3.3, 3.3.4, 5.1, 5.10</p>
+<p class="prose">The patient record opens with a summary designed so a clinician who has not met the patient before can quickly learn their key problems and treatments. The banner at the top always shows the patient's identity and risk status. If the record was not updated after the last consultation, a yellow flag stays on the record until someone updates it.</p><div class="frame-wrap"><div class="frame">
+<div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://mentcare.midscot-health.scot/patients/485-777-3456</div></div>
+<div class="staff">
+<div class="side rel"><div class="wordmark"><span class="crest">M</span>Mentcare</div><a class="on">Find a patient</a><a class="">Today's clinic</a><a class="">Home visits</a>
+<div class="foot">Signed in as<br><b style="color:#fff">Dr Ewan Fraser</b><br>Clinical staff</div></div>
+<div><div class="top"><h5>Patient record</h5><span class="who-pill"><span class="btn sec sm">Print selected parts</span><span class="btn sm">Start consultation</span></span></div><div class="pbanner"><i class="mk" style="left:6px;top:-10px">1</i><div><div class="nm">Morag Campbell</div><span class="muted">Female, 40</span></div>
+<div class="kv">NHS number<b>485 777 3456</b></div><div class="kv">Date of birth<b>12 Apr 1986</b></div><div class="kv">Responsible consultant<b>Dr Ewan Fraser</b></div><span class="risk" style="margin-left:auto">High risk: self-harm history</span></div><div class="stale rel"><i class="mk" style="left:6px;top:4px">2</i><b style="margin-left:18px">!</b> Not updated after the consultation on 18 Sep 2026 at Perth day clinic. Add the consultation details to clear this flag.</div><div class="body">
+<div class="grid3" style="grid-template-columns:1.1fr 1fr 1fr">
+<div class="card rel"><i class="mk" style="left:-12px;top:-12px">3</i><p class="sec-h">Diagnoses</p><ul class="list">
+<li><b>Recurrent depressive disorder</b><br><span class="muted">Dr E. Fraser, 14 Mar 2023</span></li><li><b>Generalised anxiety disorder</b><br><span class="muted">Dr E. Fraser, 09 Jan 2024</span></li></ul>
+<p class="sec-h" style="margin-top:12px">Treatments</p><ul class="list"><li>Cognitive behavioural therapy, weekly<br><span class="muted">Since Feb 2026, K. Munro</span></li></ul></div>
+<div class="card rel"><i class="mk" style="left:-12px;top:-12px">4</i><p class="sec-h">Current medication</p><ul class="list">
+<li><b>Sertraline 100 mg</b>, once daily<br><span class="muted">Last prescribed 18 Sep 2026, Perth day clinic</span></li></ul>
+<p class="sec-h" style="margin-top:12px">Adverse reactions</p><ul class="list"><li style="color:#8A2A20"><b>Mirtazapine</b>: skin rash, 2024</li></ul>
+<p class="sec-h" style="margin-top:12px">Referrals</p><ul class="list"><li>Social services, housing support<br><span class="muted">Dr E. Fraser, 02 Sep 2026</span></li></ul></div>
+<div class="card rel"><i class="mk" style="left:-12px;top:-12px">5</i><p class="sec-h">Consultations <span class="muted" style="font-weight:400">12 in total</span></p><ul class="list">
+<li><b>18 Sep 2026</b>, Perth day clinic<br><span class="muted">Dr E. Fraser, K. Munro</span></li>
+<li><b>04 Sep 2026</b>: <span style="color:#8A2A20">missed</span><br><span class="muted">Reason: patient said she forgot</span></li>
+<li><b>21 Aug 2026</b>, drop-in<br><span class="muted">Dr A. Ross</span></li></ul>
+<p class="sec-h" style="margin-top:12px">Staff meetings</p><ul class="list"><li>10 Sep 2026: care review<br><span class="muted">Decision: increase CBT to weekly</span></li></ul></div></div>
+<div class="card rel" style="margin-top:14px"><i class="mk" style="left:-12px;top:-12px">6</i><p class="sec-h">Clinician comments</p><p style="margin:0">Mood lower since loss of tenancy in August. Engages well with CBT but attendance is irregular. Sister (Eilidh, next of kin) is supportive and has agreed to be contacted. <span class="muted">Dr E. Fraser, 18 Sep 2026</span></p></div></div></div></div><div class="statusbar"><span>Mentcare, Mid-Scotland Health Authority</span><span>Supported browser: Firefox. Service hours 08:00 to 18:30, Monday to Friday</span></div></div></div><p class="fig-cap">Figure 3. View a patient record.</p><ol class="steps"><li>The patient banner shows name, NHS number or generated ID, date of birth, responsible consultant, and the risk indicator. A red label means a history of deliberate self-harm.</li><li>A yellow flag means the record was not updated during or after a consultation. The patient also appears on the clinic's daily list of records needing update (screen 9).</li><li>Diagnoses and treatments show who made them and when. A patient can have several diagnoses and treatments at once.</li><li>Current medication shows where and when each drug was last prescribed. Known adverse reactions, referrals, and their dates are listed below it.</li><li>Consultations show the date, clinic, and staff involved, including missed appointments with the reason if known. Meetings held about the patient show their decisions.</li><li>Clinician comments are free text for anything the structured fields cannot capture. Use <b>Start consultation</b> to begin updating the record, or <b>Print selected parts</b> to print (screen 7).</li></ol></section>
+<section class="screen" id="s4"><h3>4. Record a consultation</h3><p class="who"><b>Clinical staff</b>, requirements 3.1.4, 3.1.5, 3.1.6, 3.1.8, 3.1.9, 3.4.1, 6.1.12</p>
+<p class="prose">Starting a consultation automatically creates a consultation record with the date, time, and staff present. Information already in the record is filled in, so staff only change what is new. If nothing has changed, one button records the consultation and carries forward the diagnoses and medication from the previous visit.</p><div class="frame-wrap"><div class="frame">
+<div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://mentcare.midscot-health.scot/patients/485-777-3456/consultations/new</div></div>
+<div class="staff">
+<div class="side rel"><div class="wordmark"><span class="crest">M</span>Mentcare</div><a class="">Find a patient</a><a class="on">Today's clinic</a><a class="">Home visits</a>
+<div class="foot">Signed in as<br><b style="color:#fff">Dr Ewan Fraser</b><br>Clinical staff</div></div>
+<div><div class="top"><h5>Consultation, Mon 28 Sep 2026, 10:15, Perth day clinic</h5><span class="who-pill"><span class="av">EF</span>Dr Ewan Fraser</span></div><div class="pbanner"><div><div class="nm">Morag Campbell</div><span class="muted">Female, 40</span></div>
+<div class="kv">NHS number<b>485 777 3456</b></div><div class="kv">Date of birth<b>12 Apr 1986</b></div><div class="kv">Responsible consultant<b>Dr Ewan Fraser</b></div><span class="risk" style="margin-left:auto">High risk: self-harm history</span></div><div class="body">
+<div class="grid2" style="grid-template-columns:1.5fr 1fr">
+<div class="card">
+<div class="fld rel"><i class="mk" style="left:-34px;top:18px">1</i><span class="lbl">Staff present <small>(up to 6)</small></span><div><span class="pill on">Dr Ewan Fraser ×</span><span class="pill on">Kirsty Munro, CPN ×</span><span class="pill">+ Add staff</span></div></div>
+<div class="fld rel"><i class="mk" style="left:-34px;top:18px">2</i><span class="lbl">Diagnoses <small>(carried forward from 18 Sep 2026)</small></span><div><span class="pill on">Recurrent depressive disorder ×</span><span class="pill on">Generalised anxiety disorder ×</span></div><div class="in sel ph">Add a diagnosis from the list of known conditions</div></div>
+<div class="fld"><span class="lbl">Comments on diagnosis</span><div class="in">No change to working diagnosis.</div></div>
+<div class="fld rel"><i class="mk" style="left:-34px;top:18px">3</i><span class="lbl">Consultation notes</span><div class="in area" style="min-height:86px">Reports better sleep. Has found temporary accommodation with sister. No thoughts of self-harm reported today. Continue current plan.</div><div class="cnt-note">148 of 2,000 characters</div></div>
+<div class="fld rel"><i class="mk" style="left:-34px;top:18px">4</i><span class="lbl">Referral</span><div class="row"><div class="in sel ph">Refer to department or service</div><div class="in ph">Information for the receiving service</div></div></div>
+</div>
+<div><div class="card rel"><i class="mk" style="left:-12px;top:-12px">5</i><h4>Nothing changed?</h4><p class="sub">Record this consultation with the same diagnoses and medication as last time.</p><span class="btn sec" style="width:100%;justify-content:center">No change</span></div>
+<div class="card" style="margin-top:14px"><h4>Medication</h4><p class="sub" style="margin-bottom:8px">Sertraline 100 mg once daily, from 18 Sep 2026</p><span class="btn sec sm">Change medication</span></div>
+<div class="card rel" style="margin-top:14px"><i class="mk" style="left:-12px;top:-12px">6</i><span class="btn" style="width:100%;justify-content:center">Save consultation</span><p class="muted" style="margin:8px 0 0">If you can't finish now, the record can be completed later. It will be flagged until then.</p></div></div></div></div></div></div><div class="statusbar"><span>Mentcare, Mid-Scotland Health Authority</span><span>Supported browser: Firefox. Service hours 08:00 to 18:30, Monday to Friday</span></div></div></div><p class="fig-cap">Figure 4. Record a consultation.</p><ol class="steps"><li>Check the staff present. You are added automatically; add up to five more colleagues.</li><li>Diagnoses from the last consultation are filled in. Add or remove conditions using the list of known conditions, and add comments if needed.</li><li>Write your consultation notes. Free-text fields have a character limit shown under the box; longer text is rejected.</li><li>To refer the patient elsewhere, choose the department or service from the list and add any information for them. The date and your name are recorded automatically.</li><li>If nothing has changed since the last visit, select <b>No change</b> instead. The consultation is saved with the previous diagnoses and medication.</li><li>Select <b>Save consultation</b>. If you have to stop before finishing, the record can be updated later and stays flagged until it is.</li></ol></section>
+<section class="screen" id="s5"><h3>5. Prescribe medication</h3><p class="who"><b>Clinical staff</b>, requirements 3.1.7, 3.1.11, 3.1.13, 5.5, 5.6, 5.7, 5.9</p>
+<p class="prose">Medication is chosen from the health authority's approved list, using information from the drug information system. While prescribing, Mentcare shows the patient's previous treatment and where it was last issued, warns about known adverse reactions, and applies the limits for restricted medication. Prescriptions are printed through the existing PRESCRIPTION system.</p><div class="frame-wrap"><div class="frame">
+<div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://mentcare.midscot-health.scot/patients/485-777-3456/prescribe</div></div>
+<div class="staff">
+<div class="side rel"><div class="wordmark"><span class="crest">M</span>Mentcare</div><a class="">Find a patient</a><a class="on">Today's clinic</a><a class="">Home visits</a>
+<div class="foot">Signed in as<br><b style="color:#fff">Dr Ewan Fraser</b><br>Clinical staff</div></div>
+<div><div class="top"><h5>New prescription</h5><span class="who-pill"><span class="av">EF</span>Dr Ewan Fraser</span></div><div class="pbanner"><div><div class="nm">Morag Campbell</div><span class="muted">Female, 40</span></div>
+<div class="kv">NHS number<b>485 777 3456</b></div><div class="kv">Date of birth<b>12 Apr 1986</b></div><div class="kv">Responsible consultant<b>Dr Ewan Fraser</b></div><span class="risk" style="margin-left:auto">High risk: self-harm history</span></div><div class="body">
+<div class="grid2" style="grid-template-columns:1.2fr 1fr">
+<div><div class="card">
+<div class="toast info rel" style="margin-bottom:12px"><i class="mk" style="left:-34px;top:6px">1</i><div><b>Last prescription: 18 Sep 2026 at Perth day clinic.</b> Sertraline 100 mg, 28 days, Dr E. Fraser.</div></div>
+<div class="rel" style="margin-bottom:12px"><i class="mk" style="left:-34px;top:0">2</i><span class="lbl">On this prescription</span><div class="file"><div style="flex:1"><b>Diazepam 2 mg</b>, three times daily, <b>14 days</b><br><span style="color:#7A5410">Restricted list: duration limited to 14 days by default.</span><br><span class="muted">Comment: short course for acute anxiety, review at next visit.</span></div></div></div>
+<div class="fld rel"><i class="mk" style="left:-34px;top:18px">3</i><span class="lbl">Add medication <small>(approved list)</small></span><div class="in sel">Mirtazapine 15 mg tablets</div><div style="margin-top:6px"><a style="color:var(--u-brand);font-weight:600">View known side effects</a></div></div>
+<div class="row"><div class="fld"><span class="lbl">Dose</span><div class="in sel">15 mg at night</div></div><div class="fld"><span class="lbl">Duration</span><div class="in sel">28 days</div></div></div>
+<div class="fld"><span class="lbl">Prescriber comments</span><div class="in ph">Optional comment for this medication</div></div>
+<div style="display:flex;gap:10px;flex-wrap:wrap"><span class="btn rel">Add to prescription<i class="mk" style="right:-10px;top:-16px">5</i></span><span class="btn sec">Print via PRESCRIPTION</span></div></div>
+<div class="card" style="margin-top:14px"><p class="sec-h">Previous treatment</p><table class="t"><tr><th>Medication</th><th>Dates</th><th>Prescriber</th></tr>
+<tr><td>Sertraline 100 mg</td><td>Jan 2024 to now</td><td>Dr E. Fraser</td></tr><tr><td>Mirtazapine 15 mg</td><td>Mar to Apr 2024, stopped</td><td>Dr A. Ross</td></tr></table></div></div>
+<div class="modal" style="align-self:start"><i class="mk" style="left:-12px;top:-12px">4</i><h4 style="margin:0 0 6px;color:#8A2A20">Adverse reaction recorded</h4>
+<p style="margin:0 0 10px">You added <b>Mirtazapine 15 mg</b>. This patient had a skin rash reaction to mirtazapine in April 2024.</p>
+<div class="fld"><span class="lbl">Reason for prescribing anyway <small>(required to override)</small></span><div class="in area ph" style="min-height:56px">Enter your clinical reason</div></div>
+<div style="display:flex;gap:10px;flex-wrap:wrap"><span class="btn">Remove medication</span><span class="btn sec">Override and prescribe</span></div>
+<p class="muted" style="margin:10px 0 0">Overrides are recorded with the warning and your name.</p></div></div></div></div></div><div class="statusbar"><span>Mentcare, Mid-Scotland Health Authority</span><span>Supported browser: Firefox. Service hours 08:00 to 18:30, Monday to Friday</span></div></div></div><p class="fig-cap">Figure 5. Prescribe medication.</p><ol class="steps"><li>The date and place of the patient's last prescription are highlighted, to help spot patients collecting medication from several clinics.</li><li>Medications already added to this prescription are listed with their dose and duration. For medication on the restricted list, such as diazepam here, the duration is limited to two weeks by default. For medication marked Pharmacy Only (for example methadone), Mentcare requires the patient to collect a daily dose at a pharmacy.</li><li>To add another, choose it from the approved list, with its dose, duration, and an optional comment. Select <b>View known side effects</b> to check them without leaving the screen.</li><li>If the patient has a recorded adverse reaction to the chosen drug, a warning appears. Either remove it or give a reason and override; the override, the warning, and your name are saved.</li><li>Add more medications to the same prescription if needed, then select <b>Print via PRESCRIPTION</b> to print it through the existing prescribing system. The previous treatment table stays visible for checking.</li></ol></section>
+<section class="screen" id="s6"><h3>6. Record risk and self-harm incidents</h3><p class="who"><b>Clinical staff</b>, requirements 3.1.12, 5.1, 5.2, 5.3, 5.4</p>
+<p class="prose">The Risk tab holds the clinical risk assessment and a log of incidents. Setting the risk level updates the label in the patient banner everywhere in the system. From here, clinicians can also generate a warning letter to clinic staff and relatives.</p><div class="frame-wrap"><div class="frame">
+<div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://mentcare.midscot-health.scot/patients/485-777-3456/risk</div></div>
+<div class="staff">
+<div class="side rel"><div class="wordmark"><span class="crest">M</span>Mentcare</div><a class="on">Find a patient</a><a class="">Today's clinic</a><a class="">Home visits</a>
+<div class="foot">Signed in as<br><b style="color:#fff">Dr Ewan Fraser</b><br>Clinical staff</div></div>
+<div><div class="top"><h5>Risk assessment</h5><span class="who-pill"><span class="av">EF</span>Dr Ewan Fraser</span></div><div class="pbanner"><div><div class="nm">Morag Campbell</div><span class="muted">Female, 40</span></div>
+<div class="kv">NHS number<b>485 777 3456</b></div><div class="kv">Date of birth<b>12 Apr 1986</b></div><div class="kv">Responsible consultant<b>Dr Ewan Fraser</b></div><span class="risk" style="margin-left:auto">High risk: self-harm history</span></div><div class="body">
+<div class="tabs"><span>Summary</span><span>Consultations</span><span>Medication</span><span class="on">Risk</span><span>Mental Health Act</span></div>
+<div class="grid2" style="grid-template-columns:1fr 1.3fr">
+<div class="card rel"><i class="mk" style="left:-12px;top:-12px">1</i><h4>Risk indicator</h4>
+<div class="fld" style="margin-top:10px"><span class="lbl">Risk to self</span><div class="seg"><span>Low</span><span>Medium</span><span class="on" style="background:#B3372B">High</span></div></div>
+<div class="fld"><span class="lbl">Risk to others</span><div class="seg"><span class="on">Low</span><span>Medium</span><span>High</span></div></div>
+<div class="fld"><span class="lbl">History of deliberate self-harm</span><div class="chk" style="margin:0"><span class="box on"></span><span>Yes, highlight this record</span></div></div>
+<div class="fld"><span class="lbl">Assessment notes</span><div class="in area">Risk raised after recent housing loss. Safety plan agreed with patient and sister.</div></div>
+<span class="btn">Save assessment</span><p class="muted" style="margin:8px 0 0">Last assessed 18 Sep 2026 by Dr E. Fraser</p></div>
+<div><div class="card rel"><i class="mk" style="left:-12px;top:-12px">2</i><div class="sec-h">Incidents and threats<span class="btn sm">Add incident</span></div>
+<table class="t"><tr><th>Date</th><th>Type</th><th>Details</th><th>Recorded by</th></tr>
+<tr><td>30 Aug 2026</td><td>Threat of deliberate self-harm</td><td>Reported by sister by phone. Crisis team contacted.</td><td>K. Munro</td></tr>
+<tr><td>11 May 2024</td><td>Accidental, linked to treatment</td><td>Missed doses then doubled up. Dosing explained again.</td><td>Dr A. Ross</td></tr></table></div>
+<div class="card rel" style="margin-top:14px"><i class="mk" style="left:-12px;top:-12px">3</i><h4>Warning letters</h4><p class="sub">Tell clinic staff and relatives about the possibility of deliberate self-harm.</p>
+<div class="row"><div class="in sel">Clinic staff, Perth day clinic</div><div class="in sel">Eilidh Campbell (sister)</div></div>
+<div style="margin-top:10px"><span class="btn sec">Preview letter</span> <span class="btn">Generate letters</span></div></div></div></div></div></div></div><div class="statusbar"><span>Mentcare, Mid-Scotland Health Authority</span><span>Supported browser: Firefox. Service hours 08:00 to 18:30, Monday to Friday</span></div></div></div><p class="fig-cap">Figure 6. Record risk and self-harm incidents.</p><ol class="steps"><li>Set the risk to self and to others, and mark whether the patient has a history of deliberate self-harm. Records marked this way are highlighted for all clinical users.</li><li>Select <b>Add incident</b> to record details of an incident or threat of deliberate self-harm. Accidental self-harm is recorded only when it is directly related to prescribed treatment, such as over- or under-dosing.</li><li>To warn others, choose the clinic staff and relatives to notify, preview the letter, and select <b>Generate letters</b>.</li></ol></section>
+<section class="screen" id="s7"><h3>7. Print selected parts of a record</h3><p class="who"><b>Clinical staff</b>, requirement 3.1.16</p>
+<p class="prose">Clinicians can print just the parts of a record they need, for example the medication history for a referral, instead of the whole record.</p><div class="frame-wrap"><div class="frame">
+<div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://mentcare.midscot-health.scot/patients/485-777-3456/print</div></div>
+<div class="staff">
+<div class="side rel"><div class="wordmark"><span class="crest">M</span>Mentcare</div><a class="on">Find a patient</a><a class="">Today's clinic</a><a class="">Home visits</a>
+<div class="foot">Signed in as<br><b style="color:#fff">Dr Ewan Fraser</b><br>Clinical staff</div></div>
+<div><div class="top"><h5>Print record</h5><span class="who-pill"><span class="av">EF</span>Dr Ewan Fraser</span></div><div class="pbanner"><div><div class="nm">Morag Campbell</div><span class="muted">Female, 40</span></div>
+<div class="kv">NHS number<b>485 777 3456</b></div><div class="kv">Date of birth<b>12 Apr 1986</b></div><div class="kv">Responsible consultant<b>Dr Ewan Fraser</b></div><span class="risk" style="margin-left:auto">High risk: self-harm history</span></div><div class="body">
+<div class="grid2" style="grid-template-columns:1fr 1.2fr">
+<div class="card rel"><i class="mk" style="left:-12px;top:-12px">1</i><h4>Choose what to print</h4>
+<div class="chk" style="margin-top:12px"><span class="box on"></span>Personal details</div><div class="chk"><span class="box on"></span>Diagnoses</div><div class="chk"><span class="box on"></span>Medication history</div>
+<div class="chk"><span class="box"></span>Consultations</div><div class="chk"><span class="box"></span>Risk assessment and incidents</div><div class="chk"><span class="box"></span>Referrals</div><div class="chk"><span class="box"></span>Mental Health Act information</div><div class="chk"><span class="box"></span>Clinician comments</div>
+<span class="btn rel">Print 3 sections<i class="mk" style="right:-10px;top:-16px">3</i></span></div>
+<div class="letter rel"><i class="mk" style="left:-12px;top:-12px">2</i><b>Mentcare patient record extract</b><br><span style="color:#666">Printed 28 Sep 2026 by Dr E. Fraser. Confidential.</span><hr style="border:0;border-top:1px solid #ddd">
+<b>Personal details</b><br>Morag Campbell, NHS 485 777 3456, born 12 Apr 1986<br><br><b>Diagnoses</b><br>Recurrent depressive disorder (14 Mar 2023)<br>Generalised anxiety disorder (09 Jan 2024)<br><br><b>Medication history</b><br>Sertraline 100 mg, Jan 2024 to present<br>Mirtazapine 15 mg, Mar to Apr 2024 (stopped, rash)</div></div></div></div></div><div class="statusbar"><span>Mentcare, Mid-Scotland Health Authority</span><span>Supported browser: Firefox. Service hours 08:00 to 18:30, Monday to Friday</span></div></div></div><p class="fig-cap">Figure 7. Print selected parts of a record.</p><ol class="steps"><li>Tick the sections of the record to include.</li><li>Check the print preview on the right.</li><li>Select <b>Print</b>. Every printout is marked confidential with the date and your name.</li></ol></section>
+<section class="screen" id="s8"><h3>8. Take records on a home visit</h3><p class="who"><b>Clinical staff</b>, requirements 3.1.17, 3.1.18, 3.1.19, 6.1.13</p>
+<p class="prose">Clinicians visiting patients at home can download the records they need to a registered laptop, update them offline, and upload them when back online. After upload, the copies are securely deleted from the laptop. Copying records to USB drives or other portable storage is blocked.</p><div class="frame-wrap"><div class="frame">
+<div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://mentcare.midscot-health.scot/home-visits</div></div>
+<div class="staff">
+<div class="side rel"><div class="wordmark"><span class="crest">M</span>Mentcare</div><a class="">Find a patient</a><a class="">Today's clinic</a><a class="on">Home visits</a>
+<div class="foot">Signed in as<br><b style="color:#fff">Dr Ewan Fraser</b><br>Clinical staff</div></div>
+<div><div class="top"><h5>Home visits</h5><span class="who-pill"><span class="av">EF</span>Dr Ewan Fraser</span></div><div class="body">
+<div class="grid2">
+<div class="card rel"><i class="mk" style="left:-12px;top:-12px">1</i><h4>Download for visits</h4><p class="sub">Laptop: MC-LAP-017 (registered)</p>
+<table class="t"><tr><th></th><th>Patient</th><th>Visit</th></tr>
+<tr><td><span class="box on"></span></td><td>Morag Campbell</td><td>Tue 29 Sep, 11:00</td></tr><tr><td><span class="box on"></span></td><td>Neil Campbell</td><td>Tue 29 Sep, 14:30</td></tr><tr><td><span class="box"></span></td><td>Duncan Paterson</td><td>Wed 30 Sep, 10:00</td></tr></table>
+<div style="margin-top:12px"><span class="btn">Download 2 records</span></div></div>
+<div><div class="card rel"><i class="mk" style="left:-12px;top:-12px">2</i><h4>Upload changes</h4><p class="sub">2 records changed offline since 29 Sep, 09:12.</p><span class="btn">Upload and remove from laptop</span>
+<div class="toast ok" style="margin-top:12px"><b>✓</b><div><b>2 records uploaded.</b> The copies on this laptop have been securely deleted.</div></div></div>
+<div class="tbl rel" style="margin-top:14px"><i class="mk" style="left:-12px;top:-12px">3</i><table class="t"><tr><th>Download log</th><th>Laptop MAC address</th><th>Returned</th></tr>
+<tr><td>2 records, 29 Sep 09:12</td><td>3C:52:82:1A:9F:04</td><td>29 Sep 17:40</td></tr><tr><td>1 record, 22 Sep 08:55</td><td>3C:52:82:1A:9F:04</td><td>22 Sep 16:10</td></tr></table></div></div></div></div></div></div><div class="statusbar"><span>Mentcare, Mid-Scotland Health Authority</span><span>Supported browser: Firefox. Service hours 08:00 to 18:30, Monday to Friday</span></div></div></div><p class="fig-cap">Figure 8. Take records on a home visit.</p><ol class="steps"><li>Before leaving, tick the patients you will visit and select <b>Download</b>. Only registered laptops can download records.</li><li>When you are back online, select <b>Upload and remove from laptop</b>. Your changes are saved to the server and the local copies are securely deleted.</li><li>Each download is logged with the records taken and the MAC address of the laptop.</li></ol></section>
+<h2 class="part">Clinic administrators</h2><p class="prose">Administrators manage appointments and attendance, prepare repeat prescriptions, set up meetings about patients, and produce management reports. They see personal details such as name and address but not clinical details like diagnoses.</p>
+<section class="screen" id="s9"><h3>9. Manage clinic appointments and daily lists</h3><p class="who"><b>Clinic administrator</b>, requirements 2.3.2, 3.3.1, 3.3.2, 3.3.3, 5.8, 5.10</p>
+<p class="prose">Appointments are booked in the existing APPOINTMENTS system. Each clinic's appointment list is downloaded into Mentcare automatically, replacing the previous list, so administrators can record attendance. Every day Mentcare produces two lists: patients who did not attend, emailed to their consultants, and patients who attended but whose records were not updated, emailed to the clinic.</p><div class="frame-wrap"><div class="frame">
+<div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://mentcare.midscot-health.scot/admin/appointments</div></div>
+<div class="staff">
+<div class="side rel"><div class="wordmark"><span class="crest">M</span>Mentcare</div><a class="on">Clinic appointments</a><a class="">Daily lists <span class=cnt>4</span></a><a class="">Repeat prescriptions</a><a class="">Meetings</a><a class="">Reports</a>
+<div class="foot">Signed in as<br><b style="color:#fff">Fiona Grant</b><br>Clinic administrator</div></div>
+<div><div class="top"><h5>Perth day clinic, Mon 28 Sep 2026</h5><span class="who-pill"><span class="av">FG</span>Fiona Grant</span></div><div class="body">
+<div class="toolbar"><i class="mk" style="left:-34px;top:4px">1</i><div class="in sel" style="max-width:240px">Perth day clinic</div><span class="muted">Downloaded from APPOINTMENTS at 07:30 today. Previous list replaced.</span></div>
+<div class="grid2" style="grid-template-columns:1.5fr 1fr">
+<div class="tbl rel"><i class="mk" style="left:-12px;top:-12px">2</i><table class="t"><tr><th>Time</th><th>Patient</th><th>Clinician</th><th>Attendance</th></tr>
+<tr><td>09:30</td><td>Duncan Paterson</td><td>Dr A. Ross</td><td><span class="chip c-acc">Attended</span></td></tr>
+<tr><td>10:15</td><td>Morag Campbell</td><td>Dr E. Fraser</td><td><span class="chip c-acc">Attended</span></td></tr>
+<tr class="hl"><td>11:00</td><td>Lewis Grant</td><td>Dr E. Fraser</td><td><span class="chip c-rej">Did not attend ▾</span></td></tr>
+<tr><td>11:45</td><td>Isla McKenzie</td><td>K. Munro</td><td><span class="muted">Not recorded ▾</span></td></tr>
+<tr><td>Drop-in</td><td>Neil Campbell</td><td>Dr A. Ross</td><td><span class="chip c-acc">Attended</span></td></tr></table>
+<div style="padding:12px;border-top:1px solid var(--u-line)" class="rel"><i class="mk" style="left:-34px;top:12px">3</i><span class="lbl">Reason missed, Lewis Grant</span><div class="row"><div class="in">Phoned at 11:20: no bus fare. Rebooking requested.</div><span class="btn" style="flex:none">Save</span></div></div></div>
+<div><div class="card rel"><i class="mk" style="left:-12px;top:-12px">4</i><h4>Did not attend, today</h4><p class="sub">Emailed to responsible consultants at 18:00</p><ul class="list"><li>Lewis Grant, Dr E. Fraser</li><li>Ross Duffy, Dr A. Ross</li></ul></div>
+<div class="card rel" style="margin-top:14px"><i class="mk" style="left:-12px;top:-12px">5</i><h4>Records not updated after consultation</h4><p class="sub">Emailed to the clinic daily. Highlighted until updated.</p><ul class="list"><li>Morag Campbell, seen 18 Sep</li><li>Neil Campbell, seen 21 Sep</li></ul></div></div></div></div></div></div><div class="statusbar"><span>Mentcare, Mid-Scotland Health Authority</span><span>Supported browser: Firefox. Service hours 08:00 to 18:30, Monday to Friday</span></div></div></div><p class="fig-cap">Figure 9. Manage clinic appointments and daily lists.</p><ol class="steps"><li>Choose the clinic. Its appointment list is downloaded from the APPOINTMENTS system automatically; new bookings and changes are made in APPOINTMENTS itself.</li><li>Record whether each patient attended, including drop-in patients.</li><li>For a missed appointment, enter the reason if one is known and select <b>Save</b>. It is added to the patient record.</li><li>The daily did-not-attend list is emailed automatically to the consultant responsible for each patient.</li><li>The daily list of records not updated after a consultation is emailed to the clinic. These records stay highlighted until a clinician updates them.</li></ol></section>
+<section class="screen" id="s10"><h3>10. Prepare repeat prescriptions</h3><p class="who"><b>Clinic administrator</b>, requirements 3.1.14, 3.1.15</p>
+<p class="prose">Administrators can generate repeat prescriptions for medication a doctor has already approved. The patient is found by patient ID or by name and date of birth. A doctor must still sign each repeat prescription before it is issued, and every issue is logged.</p><div class="frame-wrap"><div class="frame">
+<div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://mentcare.midscot-health.scot/admin/repeat-prescriptions</div></div>
+<div class="staff">
+<div class="side rel"><div class="wordmark"><span class="crest">M</span>Mentcare</div><a class="">Clinic appointments</a><a class="">Daily lists</a><a class="on">Repeat prescriptions</a><a class="">Meetings</a><a class="">Reports</a>
+<div class="foot">Signed in as<br><b style="color:#fff">Fiona Grant</b><br>Clinic administrator</div></div>
+<div><div class="top"><h5>Repeat prescriptions</h5><span class="who-pill"><span class="av">FG</span>Fiona Grant</span></div><div class="body">
+<div class="grid2" style="grid-template-columns:1fr 1.3fr">
+<div class="card rel"><i class="mk" style="left:-12px;top:-12px">1</i><h4>Find patient</h4>
+<div class="fld" style="margin-top:10px"><div class="seg"><span>Patient ID</span><span class="on">Name and date of birth</span></div></div>
+<div class="row"><div class="fld"><span class="lbl">Name</span><div class="in">Morag Campbell</div></div><div class="fld"><span class="lbl">Date of birth</span><div class="in">12/04/1986</div></div></div>
+<div class="rel"><i class="mk" style="left:-34px;top:0">2</i><span class="lbl">Approved for repeat</span><div class="file"><span class="box on"></span><div style="flex:1"><b>Sertraline 100 mg</b>, once daily, 28 days<br><span class="muted">Approved by Dr E. Fraser, 18 Sep 2026</span></div></div></div>
+<div style="margin-top:12px"><span class="btn rel">Send for doctor's signature<i class="mk" style="right:-10px;top:-16px">3</i></span></div></div>
+<div class="tbl rel" style="align-self:start"><i class="mk" style="left:-12px;top:-12px">4</i><table class="t"><tr><th>Issued</th><th>Patient</th><th>Medication</th><th>Signed by</th></tr>
+<tr><td><span class="chip c-rev">Awaiting signature</span></td><td>Morag Campbell</td><td>Sertraline 100 mg</td><td>Dr E. Fraser</td></tr>
+<tr><td>25 Sep 2026, 14:02</td><td>Duncan Paterson</td><td>Quetiapine 50 mg</td><td>Dr A. Ross</td></tr>
+<tr><td>24 Sep 2026, 10:41</td><td>Isla McKenzie</td><td>Fluoxetine 20 mg</td><td>Dr E. Fraser</td></tr></table></div></div></div></div></div><div class="statusbar"><span>Mentcare, Mid-Scotland Health Authority</span><span>Supported browser: Firefox. Service hours 08:00 to 18:30, Monday to Friday</span></div></div></div><p class="fig-cap">Figure 10. Prepare repeat prescriptions.</p><ol class="steps"><li>Find the patient by patient ID, or by name and date of birth.</li><li>Tick the medications that a doctor has approved for repeat prescription.</li><li>Select <b>Send for doctor's signature</b>. The prescription cannot be issued until the doctor signs it.</li><li>The list of repeat prescriptions shows each one's status and the date and time it was issued.</li></ol></section>
+<section class="screen" id="s11"><h3>11. Set up a meeting about a patient</h3><p class="who"><b>Clinic administrator</b>, requirements 3.3.4, 3.3.5</p>
+<p class="prose">Administrators arrange meetings of clinical staff to discuss a patient, including meetings about involuntary detention. Mentcare emails the proposed times to the staff involved. The meeting date, staff, and a summary of decisions are then stored in the patient record.</p><div class="frame-wrap"><div class="frame">
+<div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://mentcare.midscot-health.scot/admin/meetings/new</div></div>
+<div class="staff">
+<div class="side rel"><div class="wordmark"><span class="crest">M</span>Mentcare</div><a class="">Clinic appointments</a><a class="">Daily lists</a><a class="">Repeat prescriptions</a><a class="on">Meetings</a><a class="">Reports</a>
+<div class="foot">Signed in as<br><b style="color:#fff">Fiona Grant</b><br>Clinic administrator</div></div>
+<div><div class="top"><h5>New patient meeting</h5><span class="who-pill"><span class="av">FG</span>Fiona Grant</span></div><div class="body">
+<div class="grid2">
+<div class="card">
+<div class="fld rel"><i class="mk" style="left:-34px;top:18px">1</i><span class="lbl">Patient</span><div class="in">Morag Campbell, 485 777 3456</div></div>
+<div class="fld"><span class="lbl">Purpose</span><div class="in sel">Care review</div></div>
+<div class="fld rel"><i class="mk" style="left:-34px;top:18px">2</i><span class="lbl">Staff invited</span><div><span class="pill on">Dr Ewan Fraser ×</span><span class="pill on">Kirsty Munro ×</span><span class="pill on">Dr Anna Ross ×</span><span class="pill">+ Add</span></div></div>
+<div class="fld rel"><i class="mk" style="left:-34px;top:18px">3</i><span class="lbl">Possible times</span><div><span class="pill on">Thu 1 Oct, 14:00 ×</span><span class="pill on">Fri 2 Oct, 09:30 ×</span><span class="pill">+ Add time</span></div></div>
+<span class="btn">Email proposal to staff</span></div>
+<div class="card rel"><i class="mk" style="left:-12px;top:-12px">4</i><h4>Replies</h4><table class="t" style="margin-top:8px"><tr><th>Staff</th><th>Thu 1 Oct</th><th>Fri 2 Oct</th></tr>
+<tr><td>Dr E. Fraser</td><td class="y">Yes</td><td class="y">Yes</td></tr><tr><td>K. Munro</td><td>No</td><td class="y">Yes</td></tr><tr><td>Dr A. Ross</td><td>Yes</td><td class="muted">No reply</td></tr></table>
+<p class="muted" style="margin:12px 0 8px">No time suits everyone yet. Propose another time or confirm one.</p><span class="btn sec sm">Propose another time</span> <span class="btn sm">Confirm Fri 2 Oct</span>
+<hr style="border:0;border-top:1px solid var(--u-line);margin:16px 0"><span class="lbl">After the meeting: summary of decisions</span><div class="in area ph">Recorded in the patient record</div></div></div></div></div></div><div class="statusbar"><span>Mentcare, Mid-Scotland Health Authority</span><span>Supported browser: Firefox. Service hours 08:00 to 18:30, Monday to Friday</span></div></div></div><p class="fig-cap">Figure 11. Set up a meeting about a patient.</p><ol class="steps"><li>Choose the patient and the purpose of the meeting.</li><li>Add the clinical staff who should attend.</li><li>Add one or more possible dates and times, then select <b>Email proposal to staff</b>.</li><li>Follow the replies. If staff are not available, propose another time. Once confirmed, the meeting is added to the patient record, where the decisions are recorded after it takes place.</li></ol></section>
+<section class="screen" id="s12"><h3>12. Define and generate management reports</h3><p class="who"><b>Clinic administrator</b>, requirements 3.3.6, 3.3.7, 3.3.8, 3.4.2</p>
+<p class="prose">Reports for health service managers are produced by administrators. A report definition tool lets administrators choose what a report contains; common reports, such as the weekly clinic report, are defined in advance. Management reports never contain information that identifies individual patients.</p><div class="frame-wrap"><div class="frame">
+<div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://mentcare.midscot-health.scot/admin/reports</div></div>
+<div class="staff">
+<div class="side rel"><div class="wordmark"><span class="crest">M</span>Mentcare</div><a class="">Clinic appointments</a><a class="">Daily lists</a><a class="">Repeat prescriptions</a><a class="">Meetings</a><a class="on">Reports</a>
+<div class="foot">Signed in as<br><b style="color:#fff">Fiona Grant</b><br>Clinic administrator</div></div>
+<div><div class="top"><h5>Management reports</h5><span class="who-pill"><span class="av">FG</span>Fiona Grant</span></div><div class="body">
+<div class="grid2" style="grid-template-columns:1fr 1.3fr">
+<div class="card rel"><i class="mk" style="left:-12px;top:-12px">1</i><h4>Available reports</h4><ul class="list" style="margin-top:8px">
+<li><b>Weekly clinic report</b><br><span class="muted">Attendance by day, clinicians, conditions, drugs and costs</span></li>
+<li><b>Monthly authority summary</b><br><span class="muted">Patients treated, entered and left care, sectioned</span></li><li><b>Appointment waiting times</b></li></ul>
+<span class="btn sec sm rel" style="margin-top:10px">Define new report<i class="mk" style="right:-12px;top:-16px">2</i></span></div>
+<div class="card rel"><i class="mk" style="left:-12px;top:-12px">3</i><h4>Generate: weekly clinic report</h4>
+<div class="row" style="margin-top:10px"><div class="fld"><span class="lbl">Clinic</span><div class="in sel">Perth day clinic</div></div><div class="fld"><span class="lbl">Week</span><div class="in sel">21 to 25 Sep 2026</div></div></div>
+<p class="lbl">Includes</p><div><span class="pill on">Patients per day</span><span class="pill on">Clinicians</span><span class="pill on">Total patients</span><span class="pill on">Patients per condition</span><span class="pill on">Drugs prescribed</span><span class="pill on">Drug costs</span></div>
+<div style="margin-top:10px;display:flex;gap:10px"><span class="btn">Generate report</span><span class="btn sec rel">Save to this computer<i class="mk" style="right:-10px;top:-16px">4</i></span></div>
+<div class="toast ok" style="margin-top:12px"><b>✓</b><div>Report generated. Saved as weekly-perth-2026-09-21.pdf</div></div></div></div></div></div></div><div class="statusbar"><span>Mentcare, Mid-Scotland Health Authority</span><span>Supported browser: Firefox. Service hours 08:00 to 18:30, Monday to Friday</span></div></div></div><p class="fig-cap">Figure 12. Define and generate management reports.</p><ol class="steps"><li>Choose a report from the list of available reports.</li><li>Select <b>Define new report</b> to create a new report format by choosing its data, grouping, and period.</li><li>Choose the clinic and period and select <b>Generate report</b>.</li><li>Select <b>Save to this computer</b>. The saved file can then be emailed to managers or printed.</li></ol></section>
+<h2 class="part">Health service managers</h2><p class="prose">Managers do not use Mentcare directly and have no access to clinical features or patient records. They receive the reports generated by administrators.</p>
+<section class="screen" id="s13"><h3>13. Read a management report</h3><p class="who"><b>Health service manager</b>, requirements 1.2.4, 3.4, 3.4.2</p>
+<p class="prose">This is the weekly clinic report as a manager receives it. It contains totals only: attendance, clinicians, conditions, drugs prescribed and their cost. No names or other patient details appear.</p><div class="frame-wrap"><div class="frame">
+<div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://mentcare.midscot-health.scot/reports/weekly-perth-2026-09-21.pdf</div></div>
+<div class="body" style="background:#E6EAEF;padding:24px 90px">
+<div class="letter" style="font-family:'Public Sans',sans-serif"><i class="mk" style="left:-12px;top:-12px">1</i>
+<div style="display:flex;justify-content:space-between"><div><b style="font-family:'Source Serif 4',serif;font-size:18px">Weekly clinic report: Perth day clinic</b><br><span class="muted">21 to 25 September 2026. Generated 28 Sep 2026.</span></div><span class="muted">No patient-identifiable information</span></div>
+<div class="grid3" style="grid-template-columns:1.2fr 1fr 1fr;margin-top:16px;gap:20px">
+<div class="rel"><i class="mk" style="left:-34px;top:0">2</i><b>Patients attending</b><table class="t" style="margin-top:6px"><tr><th>Day</th><th>Patients</th><th>Clinicians</th></tr><tr><td>Mon</td><td>18</td><td>3</td></tr><tr><td>Tue</td><td>22</td><td>4</td></tr><tr><td>Wed</td><td>15</td><td>3</td></tr><tr><td>Thu</td><td>21</td><td>4</td></tr><tr><td>Fri</td><td>12</td><td>2</td></tr><tr><td><b>Total</b></td><td><b>88</b></td><td></td></tr></table></div>
+<div class="rel"><i class="mk" style="left:-30px;top:0">3</i><b>Patients by condition</b><div class="barrow" style="grid-template-columns:1fr 60px 24px"><span>Depressive disorders</span><span class="track"><i style="width:100%;background:#1F3F66"></i></span><b>34</b></div>
+<div class="barrow" style="grid-template-columns:1fr 60px 24px"><span>Anxiety disorders</span><span class="track"><i style="width:62%;background:#1F3F66"></i></span><b>21</b></div>
+<div class="barrow" style="grid-template-columns:1fr 60px 24px"><span>Psychotic disorders</span><span class="track"><i style="width:38%;background:#1F3F66"></i></span><b>13</b></div><div class="barrow" style="grid-template-columns:1fr 60px 24px"><span>Other</span><span class="track"><i style="width:58%;background:#1F3F66"></i></span><b>20</b></div></div>
+<div class="rel"><i class="mk" style="left:-30px;top:0">4</i><b>Drugs prescribed</b><table class="t" style="margin-top:6px"><tr><th>Drug</th><th>Amount</th><th>Cost</th></tr><tr><td>Sertraline</td><td>1,260 tabs</td><td>£63</td></tr><tr><td>Quetiapine</td><td>840 tabs</td><td>£118</td></tr><tr><td>Diazepam</td><td>210 tabs</td><td>£9</td></tr><tr><td><b>Total</b></td><td></td><td><b>£412</b></td></tr></table></div></div></div></div></div></div><p class="fig-cap">Figure 13. Read a management report.</p><ol class="steps"><li>Check the clinic and period covered at the top of the report.</li><li>Patients attending shows the number of patients seen each day, the clinicians working, and the weekly total.</li><li>Patients by condition shows how many patients were treated for each condition.</li><li>Drugs prescribed shows the total amount of each drug and its cost to the health authority.</li></ol></section>
+<h2 class="part">Mental Health Act administrator</h2><p class="prose">The MHA administrator arranges and manages assessments of patients detained under the Mental Health (Care and Treatment) (Scotland) Act 2003. Mentcare records the results and makes sure reviews happen on time.</p>
+<section class="screen" id="s14"><h3>14. Manage detention reviews</h3><p class="who"><b>MHA administrator</b>, requirements 4.1, 4.2, 4.2.1 to 4.2.3, 4.3, 4.4, 4.5</p>
+<p class="prose">The detention reviews screen lists every patient currently detained, with their required review date. Mentcare sends the administrator a reminder 30 days before each review date and a daily reminder if no review has been arranged in time. It generates the legally required letters to patients, carers, and facility managers at each stage.</p><div class="frame-wrap"><div class="frame">
+<div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://mentcare.midscot-health.scot/mha/reviews</div></div>
+<div class="staff">
+<div class="side rel"><div class="wordmark"><span class="crest">M</span>Mentcare</div><a class="on">Detention reviews <span class=cnt>1</span></a><a class="">Assessments</a><a class="">Letters</a>
+<div class="foot">Signed in as<br><b style="color:#fff">Callum Stewart</b><br>MHA administrator</div></div>
+<div><div class="top"><h5>Detention reviews</h5><span class="who-pill"><span class="av">CS</span>Callum Stewart</span></div><div class="body">
+<div class="toast bad rel" style="margin-bottom:14px"><i class="mk" style="left:-34px;top:6px">1</i><b>!</b><div><b>Daily reminder:</b> no review has been arranged for James Macleod. Required review date is Fri 2 Oct 2026.</div></div>
+<div class="grid2" style="grid-template-columns:1.35fr 1fr">
+<div class="tbl rel" style="align-self:start"><i class="mk" style="left:-12px;top:-12px">2</i><table class="t"><tr><th>Patient</th><th>Detained at</th><th>Review due</th><th>Review</th></tr>
+<tr class="hl"><td><b>James Macleod</b><br><span class="risk" style="font-size:10.5px;padding:1px 6px">History of violence</span></td><td>Glenmoor Hospital, secure ward</td><td><b style="color:#8A2A20">02 Oct 2026</b><br><span class="muted">4 days</span></td><td><span class="chip c-rej">Not arranged</span></td></tr>
+<tr><td><b>Shona Reid</b></td><td>Glenmoor Hospital, ward 3</td><td>19 Oct 2026</td><td><span class="chip c-acc">Arranged 15 Oct</span></td></tr>
+<tr><td><b>Alan Murray</b></td><td>Ninewells Hospital, IPCU</td><td>24 Oct 2026</td><td><span class="chip c-rev">Reminder sent</span></td></tr></table></div>
+<div class="card rel"><i class="mk" style="left:-12px;top:-12px">3</i><h4>James Macleod: last assessment</h4><ul class="list" style="margin-top:6px">
+<li><span class="muted">Assessed</span> 04 Sep 2026 by Dr E. Fraser and Dr A. Ross</li><li><span class="muted">Detention recommended</span> Yes, from 04 Sep 2026</li>
+<li><span class="muted">Place</span> Glenmoor Hospital, secure ward</li><li><span class="muted">Treatment</span> Antipsychotic medication, supervised</li><li><span class="muted">Agreed release date</span> Subject to review</li></ul>
+<div style="margin-top:10px" class="rel"><i class="mk" style="left:-34px;top:2px">4</i><span class="btn sm">Arrange review</span> <span class="btn sec sm">Record review outcome</span></div>
+<div class="toast bad" style="margin-top:12px"><div>This patient has a history of violence. Inform staff involved in the review.</div></div></div></div>
+<div class="card rel" style="margin-top:14px"><i class="mk" style="left:-12px;top:-12px">5</i><div class="sec-h">Letters generated<span class="muted" style="font-weight:400">James Macleod</span></div>
+<table class="t"><tr><th>Letter</th><th>To</th><th>When</th><th></th></tr>
+<tr><td>Rights under the Mental Health Act</td><td>Patient and carers</td><td>When a review is arranged</td><td><span class="muted">Not yet</span></td></tr>
+<tr><td>Release unless review confirmed by phone</td><td>Glenmoor Hospital manager</td><td>Working day before review date</td><td><span class="chip c-rev">Due 1 Oct</span></td></tr>
+<tr><td>Detention cannot continue</td><td>Patient</td><td>If no review by 2 Oct</td><td><span class="muted">Automatic</span></td></tr></table></div></div></div></div><div class="statusbar"><span>Mentcare, Mid-Scotland Health Authority</span><span>Supported browser: Firefox. Service hours 08:00 to 18:30, Monday to Friday</span></div></div></div><p class="fig-cap">Figure 14. Manage detention reviews.</p><ol class="steps"><li>Mentcare emails you 30 days before each required review date. If no review has been set up within 7 days of the date, you get a daily reminder, also shown at the top of this screen.</li><li>The list shows each detained patient, the place of detention, the review due date, and whether a review has been arranged.</li><li>Select a patient to see their last sectioning assessment: the clinicians involved, date, whether detention was recommended, place and start of detention, recommended treatment, and release date. Patients with a history of self-harm or violence carry a warning for you to pass on to the review staff.</li><li>Select <b>Arrange review</b> to schedule the review, and <b>Record review outcome</b> once it has taken place.</li><li>Mentcare generates the required letters: patients' rights when a review is arranged, the outcome and next review dates to patients and carers, patient details to the facility manager, and, if no review happens in time, notices to the facility manager and the patient.</li></ol></section>
+<h2 class="part">Medical records office and system administrators</h2><p class="prose">The medical records office keeps patient data accurate, secure, and legally compliant. System administrators manage access to the system.</p>
+<section class="screen" id="s15"><h3>15. Manage roles and permissions</h3><p class="who"><b>System administrator</b>, requirements 6.1.1 to 6.1.5</p>
+<p class="prose">Access to Mentcare is role-based. Each role has a set of permissions that decides which parts of a patient record its users can see and change. The initial roles are clinical, administrator, and medical records; new roles such as researcher or patient can be added. Every change to permissions is logged.</p><div class="frame-wrap"><div class="frame">
+<div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://mentcare.midscot-health.scot/records/roles</div></div>
+<div class="staff">
+<div class="side rel"><div class="wordmark"><span class="crest">M</span>Mentcare</div><a class="on">Roles and permissions</a><a class="">Registered PCs</a><a class="">Change requests</a><a class="">Deaths and archive</a><a class="">Anonymised reports</a>
+<div class="foot">Signed in as<br><b style="color:#fff">Heather Ross</b><br>Medical records</div></div>
+<div><div class="top"><h5>Roles and permissions</h5><span class="who-pill"><span class="av">HR</span>Heather Ross</span></div><div class="body">
+<div class="grid2" style="grid-template-columns:1.5fr 1fr">
+<div><div class="toolbar"><i class="mk" style="left:-34px;top:4px">1</i><div class="seg"><span>Clinical</span><span class="on">Administrator</span><span>Records</span><span>MHA</span></div><span class="btn sec sm" style="margin-left:auto">Add role</span></div>
+<div class="tbl rel"><i class="mk" style="left:-12px;top:-12px">2</i><table class="t"><tr><th>Information</th><th>View</th><th>Edit</th></tr>
+<tr><td>Name, address, contact details</td><td><span class="box on"></span></td><td><span class="box on"></span></td></tr>
+<tr><td>Appointments and attendance</td><td><span class="box on"></span></td><td><span class="box on"></span></td></tr>
+<tr><td>Diagnoses and treatments</td><td><span class="box"></span></td><td><span class="box"></span></td></tr>
+<tr><td>Medication</td><td><span class="box"></span></td><td><span class="box"></span></td></tr>
+<tr><td>Repeat prescriptions (prepare only)</td><td><span class="box on"></span></td><td><span class="box on"></span></td></tr>
+<tr><td>Risk assessment and incidents</td><td><span class="box"></span></td><td><span class="box"></span></td></tr>
+<tr><td>Management reports</td><td><span class="box on"></span></td><td><span class="box on"></span></td></tr></table></div>
+<div style="margin-top:12px"><span class="btn">Save permissions</span></div></div>
+<div class="card rel" style="align-self:start"><i class="mk" style="left:-12px;top:-12px">3</i><h4>Permission change log</h4><ul class="list" style="margin-top:6px">
+<li><b>28 Sep 2026, 09:14</b>, Heather Ross<br><span class="muted">Administrator: added view of repeat prescriptions</span></li>
+<li><b>14 Sep 2026, 16:02</b>, Heather Ross<br><span class="muted">Created role MHA administrator</span></li>
+<li><b>01 Sep 2026, 11:30</b>, Gordon Bell<br><span class="muted">Clinical: removed export of records</span></li></ul></div></div></div></div></div><div class="statusbar"><span>Mentcare, Mid-Scotland Health Authority</span><span>Supported browser: Firefox. Service hours 08:00 to 18:30, Monday to Friday</span></div></div></div><p class="fig-cap">Figure 15. Manage roles and permissions.</p><ol class="steps"><li>Choose a role, or select <b>Add role</b> to create a new one.</li><li>Tick what users in the role can view and edit, and select <b>Save permissions</b>. Permissions follow the Mentcare security policy.</li><li>Every change is logged with who made it, when, and what changed.</li></ol><p class="note">The Registered PCs screen, reached from the same menu, lists the static IP addresses of PCs allowed to access Mentcare. Requests from any other address are refused.</p></section>
+<section class="screen" id="s16"><h3>16. Handle patient information requests and deaths</h3><p class="who"><b>Medical records office</b>, requirements 6.2.3 to 6.2.6</p>
+<p class="prose">Patients have the right to see their personal information and ask for it to be corrected. The records office reviews each request and accepts or rejects it; Mentcare records that the information was changed, without linking the request to the patient record. When a patient's death is notified, their record is locked and archived within three months.</p><div class="frame-wrap"><div class="frame">
+<div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://mentcare.midscot-health.scot/records/change-requests</div></div>
+<div class="staff">
+<div class="side rel"><div class="wordmark"><span class="crest">M</span>Mentcare</div><a class="">Roles and permissions</a><a class="">Registered PCs</a><a class="on">Change requests <span class=cnt>1</span></a><a class="">Deaths and archive</a><a class="">Anonymised reports</a>
+<div class="foot">Signed in as<br><b style="color:#fff">Heather Ross</b><br>Medical records</div></div>
+<div><div class="top"><h5>Patient requests</h5><span class="who-pill"><span class="av">HR</span>Heather Ross</span></div><div class="body">
+<div class="grid2" style="grid-template-columns:1fr 1.2fr">
+<div class="tbl rel" style="align-self:start"><i class="mk" style="left:-12px;top:-12px">1</i><table class="t"><tr><th>Received</th><th>Request</th><th>Status</th></tr>
+<tr class="hl"><td>25 Sep</td><td>Correct address</td><td><span class="chip c-rev">To review</span></td></tr><tr><td>22 Sep</td><td>Copy of personal information</td><td><span class="chip c-acc">Sent</span></td></tr><tr><td>15 Sep</td><td>Remove diagnosis</td><td><span class="chip c-rej">Rejected</span></td></tr></table></div>
+<div><div class="card rel"><i class="mk" style="left:-12px;top:-12px">2</i><h4>Correct address</h4><p class="sub">Requested by Morag Campbell, 25 Sep 2026</p>
+<div class="row"><div><span class="lbl">Currently recorded</span>14 Hill Street, Perth PH1 5AB</div><div><span class="lbl">Requested</span>c/o Eilidh Campbell, 3 Rose Terrace, Perth PH1 5HA</div></div>
+<div class="fld" style="margin-top:12px"><span class="lbl">Decision reason</span><div class="in">Confirmed by phone with patient.</div></div><span class="btn">Accept change</span> <span class="btn sec">Reject</span></div>
+<div class="card rel" style="margin-top:14px"><i class="mk" style="left:-12px;top:-12px">3</i><h4>Record a death</h4><div class="row" style="margin-top:8px"><div class="in ph">Patient ID or NHS number</div><div class="in ph">Date notified</div></div>
+<p class="muted" style="margin:8px 0">The record becomes read-only immediately and moves to the archive within 3 months.</p><span class="btn sec">Lock record</span></div></div></div></div></div></div><div class="statusbar"><span>Mentcare, Mid-Scotland Health Authority</span><span>Supported browser: Firefox. Service hours 08:00 to 18:30, Monday to Friday</span></div></div></div><p class="fig-cap">Figure 16. Handle patient information requests and deaths.</p><ol class="steps"><li>Open a request from the list. Requests can be for a copy of personal information or for a correction.</li><li>Compare the recorded and requested information, enter a reason, and accept or reject the change following the records office procedure. Accepted changes are logged as made on request, without a link from the record to the request.</li><li>When notified of a patient's death, enter the patient and date and select <b>Lock record</b>. The record becomes read-only and is archived within three months.</li></ol></section>
+<section class="screen" id="s17"><h3>17. Create anonymised reports for research</h3><p class="who"><b>Approved research staff</b>, requirements 6.2.7 to 6.2.12</p>
+<p class="prose">Researchers may not see individual patient records, but approved staff can produce anonymised lists about conditions, treatments, and outcomes. Names, dates and places of birth, and addresses are never included, and location is limited to the regional postcode designator. Small lists can be viewed but not printed; larger lists can be printed on an approved printer but never exported.</p><div class="frame-wrap"><div class="frame">
+<div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://mentcare.midscot-health.scot/records/anonymised</div></div>
+<div class="staff">
+<div class="side rel"><div class="wordmark"><span class="crest">M</span>Mentcare</div><a class="">Roles and permissions</a><a class="">Registered PCs</a><a class="">Change requests</a><a class="">Deaths and archive</a><a class="on">Anonymised reports</a>
+<div class="foot">Signed in as<br><b style="color:#fff">Heather Ross</b><br>Medical records</div></div>
+<div><div class="top"><h5>Anonymised report</h5><span class="who-pill"><span class="av">HR</span>Heather Ross, approved list</span></div><div class="body">
+<div class="grid2" style="grid-template-columns:1fr 1.3fr">
+<div class="card rel"><i class="mk" style="left:-12px;top:-12px">1</i><h4>Build a query</h4>
+<div class="fld" style="margin-top:10px"><span class="lbl">Condition</span><div class="in sel">Recurrent depressive disorder</div></div>
+<div class="row"><div class="fld"><span class="lbl">Sex</span><div class="in sel">Female</div></div><div class="fld"><span class="lbl">Age</span><div class="in sel">Over 50</div></div></div>
+<div class="fld rel"><i class="mk" style="left:-34px;top:18px">2</i><span class="lbl">Area <small>(postcode designator only)</small></span><div class="in sel">EH</div></div>
+<div class="fld"><span class="lbl">Treatment</span><div class="in sel">Sertraline</div></div>
+<p class="muted" style="margin:0 0 10px">Not available in anonymised lists: names, dates of birth, places of birth, addresses.</p><span class="btn">Run query</span></div>
+<div class="card rel"><i class="mk" style="left:-12px;top:-12px">3</i><div class="sec-h">Results: 14 patients<span class="chip c-rev">View on screen only</span></div>
+<table class="t"><tr><th>Area</th><th>Age band</th><th>Treatment</th><th>Outcome at 6 months</th></tr>
+<tr><td>EH4</td><td>50 to 59</td><td>Sertraline</td><td>Improved</td></tr><tr><td>EH11</td><td>60 to 69</td><td>Sertraline, CBT</td><td>Improved</td></tr><tr><td>EH16</td><td>50 to 59</td><td>Sertraline</td><td>No change</td></tr><tr><td colspan="4" class="muted">11 more rows</td></tr></table>
+<div class="toast info rel" style="margin-top:12px"><i class="mk" style="left:-34px;top:6px">4</i><div>Lists with fewer than 20 entries can't be printed. Lists with 20 or more can be printed on an approved printer. Anonymised lists can never be exported.</div></div></div></div></div></div></div><div class="statusbar"><span>Mentcare, Mid-Scotland Health Authority</span><span>Supported browser: Firefox. Service hours 08:00 to 18:30, Monday to Friday</span></div></div></div><p class="fig-cap">Figure 17. Create anonymised reports for research.</p><ol class="steps"><li>Only people approved in advance by the health authority can open this screen. Choose the condition, patient characteristics, and treatment to include.</li><li>Location can only be chosen as a regional postcode designator (the first 3 or 4 characters), which does not identify a street address.</li><li>Select <b>Run query</b>. The results contain no names, birth dates, places of birth, or addresses.</li><li>Check the output rules: this list has fewer than 20 entries, so it can only be viewed on screen.</li></ol></section>
+<h2 class="part">Patients (planned role)</h2><p class="prose">The requirements ask for provision to add a patient role later. This screen shows how a patient would request their information once that role is enabled; until then, the records office enters requests on the patient's behalf.</p>
+<section class="screen" id="s18"><h3>18. Request my information or a correction</h3><p class="who"><b>Patient</b>, requirements 6.1.2, 6.2.2, 6.2.3</p>
+<p class="prose">A patient can ask to see the personal information Mentcare holds about them, or ask for something to be corrected. The request goes to the medical records office (screen 16), which replies to the patient.</p><div class="frame-wrap"><div class="frame">
+<div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://mentcare.midscot-health.scot/my-information</div></div>
+<div class="pubnav"><div class="wordmark"><span class="crest">M</span>Mentcare, my information</div><span class="who-pill" style="color:#D6E2EF"><span class="av">MC</span>Morag Campbell</span></div>
+<div class="body grid2">
+<div class="card rel"><i class="mk" style="left:-12px;top:-12px">1</i><h4 class="ui-h">What would you like to do?</h4>
+<div class="seg" style="margin:12px 0 16px"><span>Get a copy of my information</span><span class="on">Correct my information</span></div>
+<div class="fld rel"><i class="mk" style="left:-34px;top:18px">2</i><span class="lbl">What needs correcting?</span><div class="in sel">Address</div></div>
+<div class="fld"><span class="lbl">Correct information</span><div class="in area">c/o Eilidh Campbell, 3 Rose Terrace, Perth PH1 5HA</div><div class="cnt-note">52 of 500 characters</div></div>
+<span class="btn rel">Send request<i class="mk" style="right:-10px;top:-16px">3</i></span></div>
+<div><div class="toast ok"><b>✓</b><div><b>Request sent.</b> The medical records office will reply by letter or email, usually within 10 working days.</div></div>
+<div class="card" style="margin-top:14px"><h4>My requests</h4><ul class="list"><li>Correct address, 25 Sep 2026 <span class="chip c-rev">Being reviewed</span></li><li>Copy of my information, 22 Sep 2026 <span class="chip c-acc">Sent</span></li></ul></div></div></div><div class="statusbar"><span>Mentcare, Mid-Scotland Health Authority</span><span>Supported browser: Firefox. Service hours 08:00 to 18:30, Monday to Friday</span></div></div></div><p class="fig-cap">Figure 18. Request my information or a correction.</p><ol class="steps"><li>Choose whether you want a copy of your information or a correction.</li><li>For a correction, choose what is wrong and type the correct information.</li><li>Select <b>Send request</b>. You can follow its progress under My requests.</li></ol></section>
+<h2 class="part">Admissions and outreach (Team 4 block)</h2><p class="prose">Every patient reaches Mentcare through a referral. The Admissions and Outreach block receives referrals, supports triage, admits accepted patients with a first appointment, and keeps patients and carers in contact with the service. The main screens are shown here; the <a href="admissions-outreach-user-guide.html">Admissions and Outreach guide</a> covers the block in full, including outreach messages, reminder sequences, carer events, and the referral pipeline.</p>
+<section class="screen" id="s19"><h3>19. Send a referral</h3><p class="who"><b>Referrer (GP, A&E or hospital doctor)</b>, AO-01, AO-03; Mentcare 1.1, 3.1.1, 3.1.9</p>
+<p class="prose">Every Mentcare patient arrives through a referral from their own doctor, an Accident and Emergency doctor, or a hospital doctor after a course of treatment. Referrers sign in with their health authority account and complete one form. They can attach the referral letter and any supporting documents, and they indicate how urgent the referral is and whether there are safety concerns.</p><div class="frame-wrap"><div class="frame">
+<div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://mentcare.midscot-health.scot/referrals/new</div></div>
+<div class="pubnav"><div class="wordmark"><span class="crest">M</span>Mentcare referrals</div><a class="on">New referral</a><a class="">My referrals</a><span class="who-pill" style="color:#D6E2EF"><span class="av">SA</span>Dr Sarah Ahmed, Tay Street Medical Practice</span></div>
+<div class="body grid2" style="grid-template-columns:1.6fr 1fr">
+<div class="card">
+<h4 class="ui-h">New referral to mental health services</h4><p class="sub">Fields marked * are required.</p>
+<p class="lbl rel" style="font-size:14px;margin:4px 0 10px"><i class="mk" style="left:-34px;top:-4px">1</i>Patient</p>
+<div class="row"><div class="fld"><span class="lbl">Full name *</span><div class="in">Rory Buchanan</div></div><div class="fld"><span class="lbl">Date of birth *</span><div class="in">03/07/1997</div></div><div class="fld"><span class="lbl">NHS number</span><div class="in">723 004 1187</div></div></div>
+<div class="row"><div class="fld"><span class="lbl">Address *</span><div class="in">22 Glover Street, Perth PH2 0JB</div></div><div class="fld"><span class="lbl">Mobile phone</span><div class="in err">0771 23</div><div class="errtxt">Enter a full UK mobile number, for example 07712 345678.</div></div></div>
+<div class="fld"><span class="lbl">Next of kin or carer</span><div class="in">Anne Buchanan (mother), 01738 552 190</div></div>
+<p class="lbl rel" style="font-size:14px;margin:4px 0 10px"><i class="mk" style="left:-34px;top:-4px">2</i>Reason for referral</p>
+<div class="fld"><div class="in area" style="min-height:64px">Low mood for 4 months, withdrawn from work and friends, poor sleep. No response to 8 weeks of citalopram 20 mg. Requests specialist assessment.</div><div class="cnt-note">141 of 2,000 characters</div></div>
+<div class="row rel"><i class="mk" style="left:-34px;top:18px">3</i><div class="fld"><span class="lbl">Urgency *</span><div class="seg"><span>Routine</span><span class="on">Soon</span><span>Urgent</span></div></div><div class="fld"><span class="lbl">Risk of harm to self or others *</span><div class="seg"><span class="on">None known</span><span>Some</span><span>Significant</span></div></div></div>
+</div>
+<div>
+<div class="card rel"><i class="mk" style="left:-12px;top:-12px">4</i><h4>Documents</h4><p class="sub">Referral letter and any recent reports. PDF or image, up to 10 MB each.</p>
+<div class="drop">Drag files here or <b style="color:var(--u-brand)">choose files</b></div>
+<div class="file"><span class="ficon">PDF</span><div style="flex:1"><b>referral_letter_buchanan.pdf</b><br><span class="muted">240 KB</span></div><span class="muted">Remove</span></div></div>
+<div class="card rel" style="margin-top:14px"><i class="mk" style="left:-12px;top:-12px">5</i><h4>Contact consent</h4>
+<div class="chk"><span class="box on"></span><span>Patient agrees to be contacted by text message</span></div><div class="chk"><span class="box"></span><span>Patient agrees to be contacted by email</span></div>
+<div class="chk"><span class="box on"></span><span>Patient agrees that their carer may be contacted</span></div>
+<span class="btn rel">Send referral<i class="mk" style="right:-10px;top:-16px">6</i></span>
+<div class="toast bad" style="margin-top:12px"><b>!</b><div>1 field needs attention: Mobile phone.</div></div></div>
+<p class="muted" style="margin:12px 2px 0">For a referral where the patient is at immediate risk, also phone the duty clinician.</p></div></div><div class="statusbar"><span>Mentcare, Mid-Scotland Health Authority</span><span>Supported browser: Firefox. Service hours 08:00 to 18:30, Monday to Friday</span></div></div></div><p class="fig-cap">Figure 19. Send a referral.</p><ol class="steps"><li>Enter the patient's details. If the patient does not have or know their NHS number, leave it empty; Mentcare will generate a unique patient ID when the referral is accepted.</li><li>Describe the reason for referral: symptoms, history, and treatment tried so far.</li><li>Choose the urgency (Routine, Soon, or Urgent) and indicate any known risk of harm. Both are required and are used to prioritise the referral.</li><li>Attach the referral letter and any recent reports.</li><li>Record which ways the patient has agreed to be contacted. Outreach messages only use the channels ticked here.</li><li>Select <b>Send referral</b>. Any missing or invalid field is outlined in red with an explanation. Once sent, the referral appears under <b>My referrals</b> with the status Received, and the referrer is told when a decision is made.</li></ol></section>
+<section class="screen" id="s20"><h3>20. Triage a referral and decide</h3><p class="who"><b>Triage clinician</b>, AO-02, AO-03, AO-04; Mentcare 2.7, 3.1.12</p>
+<p class="prose">The triage clinician reads the referral and documents, checks whether the patient already has a Mentcare record, sets the priority, and makes a decision: accept, ask the referrer for more information, or redirect to a more suitable service. The referrer is informed of the decision automatically.</p><div class="frame-wrap"><div class="frame">
+<div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://mentcare.midscot-health.scot/triage/R-2026-0913</div></div>
+<div class="staff">
+<div class="side rel"><div class="wordmark"><span class="crest">M</span>Mentcare</div><a class="on">Referrals to triage</a><a class="">Find a patient</a><a class="">Today's clinic</a>
+<div class="foot">Signed in as<br><b style="color:#fff">Dr Ewan Fraser</b><br>Triage clinician</div></div>
+<div><div class="top"><h5>Triage referral R-2026-0913</h5><span class="who-pill"><span class="av">EF</span>Dr Ewan Fraser</span></div><div class="pbanner"><div><div class="nm">Rory Buchanan</div><span class="muted">Male, 29. Referral R-2026-0913</span></div>
+<div class="kv">NHS number<b>723 004 1187</b></div><div class="kv">Date of birth<b>03 Jul 1997</b></div><div class="kv">Referred by<b>Dr Sarah Ahmed, GP</b></div>
+<span class="chip c-rev" style="margin-left:auto;font-size:12px;padding:4px 10px">Priority: Soon</span></div><div class="body">
+<div class="grid2" style="grid-template-columns:1.2fr 1fr">
+<div><div class="card rel"><i class="mk" style="left:-12px;top:-12px">1</i><p class="sec-h">Reason for referral</p><p style="margin:0 0 10px">Low mood for 4 months, withdrawn from work and friends, poor sleep. No response to 8 weeks of citalopram 20 mg. Requests specialist assessment.</p>
+<div class="row"><div><span class="lbl">Urgency from referrer</span>Soon</div><div><span class="lbl">Risk from referrer</span>None known</div><div><span class="lbl">Contact</span>Text, carer</div></div>
+<div class="docview" style="height:170px;margin-top:12px"><div class="page"><b style="font-size:11px;color:#333">Tay Street Medical Practice, referral letter</b><div class="ln" style="width:60%"></div><div class="ln"></div><div class="ln" style="width:85%"></div><div class="ln"></div><div class="ln" style="width:70%"></div></div></div>
+<div class="chk" style="margin:10px 0 0"><span class="box on"></span><span><b>Documents reviewed</b> <span class="muted">Lorna Kerr, 27 Sep 2026</span></span></div></div>
+<div class="card rel" style="margin-top:14px"><i class="mk" style="left:-12px;top:-12px">2</i><p class="sec-h">Existing records check</p>
+<div class="toast info"><div><b>Possible match:</b> Rory Buchanan, born 11 Feb 1968, NHS 402 118 7736. Seen at Stirling clinic, last consultation March 2023. Date of birth and NHS number differ.</div></div>
+<div style="margin-top:10px"><span class="btn sec sm">Same person: reopen record</span> <span class="btn sm">Different person</span></div></div></div>
+<div class="card">
+<div class="fld rel"><i class="mk" style="left:-34px;top:18px">3</i><span class="lbl">Priority</span><div class="seg"><span>Routine</span><span class="on">Soon</span><span>Urgent</span></div><p class="muted" style="margin:6px 0 0">Soon: first appointment within the local target for non-urgent specialist referrals.</p></div>
+<div class="fld rel"><i class="mk" style="left:-34px;top:18px">4</i><span class="lbl">Decision</span><div class="in sel">Accept</div></div>
+<div class="row"><div class="fld"><span class="lbl">Clinic</span><div class="in sel">Perth day clinic</div></div><div class="fld"><span class="lbl">Responsible consultant</span><div class="in sel">Dr Ewan Fraser</div></div></div>
+<div class="fld"><span class="lbl">Message to referrer</span><div class="in area">Accepted. Patient will be offered a first appointment at Perth day clinic. Please continue citalopram until seen.</div></div>
+<span class="btn rel">Save decision<i class="mk" style="right:-10px;top:-16px">5</i></span>
+<div class="toast ok" style="margin-top:12px"><b>✓</b><div>Referral accepted. Dr Sarah Ahmed has been notified. Ready for admission.</div></div>
+<p class="muted" style="margin:12px 0 0">Other decisions: <b>Request more information</b> sends your questions to the referrer; <b>Redirect</b> records the service suggested instead and the reason.</p></div></div></div></div></div><div class="statusbar"><span>Mentcare, Mid-Scotland Health Authority</span><span>Supported browser: Firefox. Service hours 08:00 to 18:30, Monday to Friday</span></div></div></div><p class="fig-cap">Figure 20. Triage a referral and decide.</p><ol class="steps"><li>Read the reason for referral, the referrer's urgency and risk assessment, and the attached letter.</li><li>Check the existing-records match. Mentcare searches by name, date of birth, and NHS number. If the patient was seen before, select <b>Same person</b> to reopen their record instead of creating a duplicate; here the dates of birth differ, so it is a different person.</li><li>Set the priority. It can differ from the urgency the referrer gave.</li><li>Choose a decision. For <b>Accept</b>, choose the clinic and responsible consultant.</li><li>Write a message to the referrer and select <b>Save decision</b>. The referrer is notified and can see the new status under My referrals.</li></ol></section>
+<section class="screen" id="s21"><h3>21. Admit the patient: create the record and first appointment</h3><p class="who"><b>Intake coordinator</b>, AO-04, AO-05; Mentcare 2.3.2, 3.1.1, 3.1.5, 3.3.1</p>
+<p class="prose">Once a referral is accepted, the intake coordinator admits the patient. The new patient record is filled in from the referral, so nothing is typed twice. The first appointment is booked in the APPOINTMENTS system, and the record is handed to the patient records block, where clinical staff take over.</p><div class="frame-wrap"><div class="frame">
+<div class="bar"><div class="dots"><i></i><i></i><i></i></div><div class="url">https://mentcare.midscot-health.scot/intake/admit/R-2026-0913</div></div>
+<div class="staff">
+<div class="side rel"><div class="wordmark"><span class="crest">M</span>Mentcare</div><a class="">Referral inbox</a><a class="on">New patients</a><a class="">Outreach messages</a><a class="">Reminder sequences</a><a class="">Sessions and events</a><a class="">Pipeline overview</a>
+<div class="foot">Signed in as<br><b style="color:#fff">Lorna Kerr</b><br>Intake coordinator</div></div>
+<div><div class="top"><h5>Admit Rory Buchanan</h5><span class="who-pill"><span class="av">LK</span>Lorna Kerr</span></div><div class="pbanner"><div><div class="nm">Rory Buchanan</div><span class="muted">Male, 29. Referral R-2026-0913</span></div>
+<div class="kv">NHS number<b>723 004 1187</b></div><div class="kv">Date of birth<b>03 Jul 1997</b></div><div class="kv">Referred by<b>Dr Sarah Ahmed, GP</b></div>
+<span class="chip c-rev" style="margin-left:auto;font-size:12px;padding:4px 10px">Priority: Soon</span></div><div class="body">
+<div class="grid3" style="grid-template-columns:1fr 1fr 1.15fr">
+<div class="card rel"><i class="mk" style="left:-12px;top:-12px">1</i><h4>Patient record</h4><p class="sub">Filled in from referral R-2026-0913</p>
+<div class="fld"><span class="lbl">Patient identifier</span><div class="in">NHS 723 004 1187</div></div>
+<div class="fld"><span class="lbl">Address</span><div class="in">22 Glover Street, Perth PH2 0JB</div></div>
+<div class="fld"><span class="lbl">Mobile</span><div class="in">07712 345678</div></div>
+<div class="fld"><span class="lbl">Registered practice</span><div class="in">Tay Street Medical Practice</div></div>
+<div class="fld"><span class="lbl">Family contact</span><div class="in">Anne Buchanan (mother)</div></div>
+<p class="muted" style="margin:0">No NHS number? Mentcare generates an ID such as MC-000812.</p></div>
+<div class="card rel"><i class="mk" style="left:-12px;top:-12px">2</i><h4>First appointment</h4><p class="sub">Free slots from APPOINTMENTS, Perth day clinic, Dr E. Fraser</p>
+<ul class="list"><li><span class="box"></span> Tue 6 Oct, 09:30</li><li style="background:#EEF3FA;margin:0 -8px;padding:7px 8px"><span class="box on"></span> <b>Thu 8 Oct, 14:00</b></li><li><span class="box"></span> Mon 12 Oct, 10:15</li><li><span class="box"></span> Wed 14 Oct, 11:00</li></ul>
+<span class="btn sm" style="margin-top:8px">Book selected slot</span></div>
+<div class="card rel"><i class="mk" style="left:-12px;top:-12px">3</i><h4>Admission</h4><p class="sub">Clinic: Perth day clinic. Consultant: Dr E. Fraser. First appointment: Thu 8 Oct, 14:00.</p>
+<span class="btn">Admit patient</span>
+<ul class="list" style="margin-top:10px"><li style="color:#1D5A3E">✓ Record sent to patient records</li><li style="color:#1D5A3E">✓ Appointment booked in APPOINTMENTS</li><li style="color:#1D5A3E">✓ Welcome letter and reminders started</li><li style="color:#1D5A3E">✓ Referrer notified</li></ul>
+<div class="code" style="margin-top:12px;font-size:10.5px;white-space:pre-wrap"><span class="k">POST</span> /api/patients
+{ <span class="s">"nhsNumber"</span>: <span class="s">"7230041187"</span>,
+  <span class="s">"referralId"</span>: <span class="s">"R-2026-0913"</span>,
+  <span class="s">"clinic"</span>: <span class="s">"PERTH-DAY"</span>,
+  <span class="s">"consultant"</span>: <span class="s">"efraser"</span> }</div></div></div></div></div></div><div class="statusbar"><span>Mentcare, Mid-Scotland Health Authority</span><span>Supported browser: Firefox. Service hours 08:00 to 18:30, Monday to Friday</span></div></div></div><p class="fig-cap">Figure 21. Admit the patient: create the record and first appointment.</p><ol class="steps"><li>Check the patient record. It is filled in from the referral; correct anything that has changed. If the patient has no NHS number, a unique Mentcare ID is generated.</li><li>Choose a first appointment from the free slots in the APPOINTMENTS system for the chosen clinic and consultant, and select <b>Book selected slot</b>.</li><li>Select <b>Admit patient</b>. The record is sent to the patient records block, the appointment is booked, the welcome letter and reminder sequence start, and the referrer is told. The ticks show each step succeeded; any step that fails is shown in red with a <b>Retry</b> button.</li></ol></section>
+</main></div>
+<script>(function(){var t=document.getElementById('mktoggle');try{if(localStorage.getItem('mc-mk')==='off'){t.checked=false;document.body.classList.add('nomk');}}catch(e){}
+t.addEventListener('change',function(){document.body.classList.toggle('nomk',!t.checked);try{localStorage.setItem('mc-mk',t.checked?'on':'off');}catch(e){}});})();</script>
+</body></html>
