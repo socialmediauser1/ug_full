@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mentcare prototype: Admissions and Outreach (Team 4)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>
+:root{box-sizing:border-box;color-scheme:light}
+*,*::before,*::after{box-sizing:inherit}
+/* The product UI is intentionally light (clinical application). */
+/* ---------- Product mockups (fixed light product palette) ---------- */
+.frame{--u-bg:#F4F6F5;--u-surf:#fff;--u-ink:#18211D;--u-mut:#5F6D67;--u-line:#DDE3E0;--u-brand:#1F3F66;--u-brand-2:#2E5A8A;--u-gold:#B7811A;--u-red:#B3372B;--u-blue:#2D5B8C;
+  border:1px solid #C9D1CD;border-radius:10px;overflow:hidden;background:var(--u-bg);color:var(--u-ink);font-size:13px;line-height:1.45;min-width:980px;box-shadow:0 1px 0 rgba(0,0,0,.04),0 12px 30px -18px rgba(20,40,30,.35)}
+.frame-wrap{overflow-x:auto;max-width:100%;padding:6px 14px 10px 14px;margin:0 -14px}
+.bar{display:flex;align-items:center;gap:10px;background:#E6EAE8;padding:8px 12px;border-bottom:1px solid #D0D8D4}
+.dots{display:flex;gap:6px}.dots i{width:10px;height:10px;border-radius:50%;background:#C3CBC7;display:block}
+.url{flex:1;background:#fff;border-radius:6px;padding:4px 10px;color:#56645E;font-size:12px}
+.pubnav{display:flex;align-items:center;gap:22px;background:var(--u-brand);color:#fff;padding:14px 26px}
+.wordmark{font-family:"Source Serif 4",Georgia,serif;font-size:18px;font-weight:700;margin-right:auto;display:flex;align-items:center;gap:10px}
+.crest{width:26px;height:26px;border-radius:5px;background:#fff;color:var(--u-brand);display:grid;place-items:center;font-size:14px;font-weight:700}
+.pubnav a{color:#D6E2EF;text-decoration:none}
+.pubnav a.on{color:#fff;font-weight:600;border-bottom:2px solid var(--u-gold);padding-bottom:2px}
+.pubnav .btn-ghost{border:1px solid rgba(255,255,255,.5);border-radius:6px;padding:5px 12px;color:#fff}
+.body{padding:26px}
+.grid2{display:grid;grid-template-columns:1.4fr 1fr;gap:22px}
+.grid2>*,.grid3>*{min-width:0}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{background:var(--u-surf);border:1px solid var(--u-line);border-radius:8px;padding:18px;position:relative}
+.card h4{margin:0 0 4px;font-size:16px}
+.card .sub{color:var(--u-mut);margin:0 0 14px}
+.card h4.ui-h,.ui-h{font-family:"Source Serif 4",Georgia,serif;font-size:24px;margin:0 0 4px}
+.lbl{display:block;font-weight:600;margin:0 0 4px;font-size:12.5px}
+.lbl small{font-weight:400;color:var(--u-mut)}
+.fld{margin:0 0 13px;position:relative}
+.in{border:1px solid #C5CEC9;border-radius:6px;background:#fff;padding:8px 10px;min-height:35px;color:var(--u-ink)}
+.in.ph{color:#98A39E}
+.in.sel{display:flex;justify-content:space-between}
+.in.sel::after{content:"▾";color:var(--u-mut)}
+.in.area{min-height:70px}
+.in.err{border-color:var(--u-red);box-shadow:0 0 0 2px #F3D6D2}
+.errtxt{color:var(--u-red);font-size:12px;margin-top:4px}
+.row{display:flex;gap:12px}.row>*{flex:1}
+.chk{display:flex;gap:8px;align-items:flex-start;margin:4px 0 14px}
+.box{display:inline-block;width:16px;height:16px;border:1.5px solid #9AA6A0;border-radius:3px;flex:none;margin-top:1px;background:#fff}
+.box.on{background:var(--u-brand);border-color:var(--u-brand);position:relative}
+.box.on::after{content:"";position:absolute;left:4px;top:1px;width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.btn{white-space:nowrap;display:inline-flex;align-items:center;gap:6px;background:var(--u-brand);color:#fff;border-radius:6px;padding:8px 16px;font-weight:600;border:1px solid var(--u-brand)}
+.btn.sec{background:#fff;color:var(--u-brand)}
+.btn.sm{padding:5px 10px;font-size:12px}
+.btn.gold{background:var(--u-gold);border-color:var(--u-gold)}
+.toast{border-radius:7px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start}
+.toast.ok{background:#E3F1EA;border:1px solid #A9D1BD;color:#1D4A36}
+.toast.bad{background:#FBE9E6;border:1px solid #EDB9B1;color:#7E241A}
+.toast.info{background:#E7EEF6;border:1px solid #B8CCE2;color:#23476D}
+.muted{color:var(--u-mut)}
+.chip{display:inline-block;border-radius:999px;padding:2px 9px;font-size:11.5px;font-weight:600;white-space:nowrap}
+.c-sub{background:#E7EEF6;color:#23476D}.c-rev{background:#FBF1DC;color:#7A5410}.c-acc{background:#E0F0E7;color:#1D5A3E}.c-rej{background:#F6E1DE;color:#8A2A20}
+.c-hi{background:#F6E1DE;color:#8A2A20}.c-med{background:#FBF1DC;color:#7A5410}.c-lo{background:#EDF0EE;color:#4F5C56}
+table.t{width:100%;border-collapse:collapse;background:#fff}
+table.t th{font-size:11.5px;color:var(--u-mut);font-weight:600;text-align:left;padding:9px 10px;border-bottom:1px solid var(--u-line);background:#FAFBFA}
+table.t td{padding:9px 10px;border-bottom:1px solid #EEF1EF;vertical-align:middle}
+table.t tr.hl td{background:#EEF3FA}
+.tbl{border:1px solid var(--u-line);border-radius:8px;position:relative;background:#fff}
+.tbl table.t{background:transparent}.tbl table.t th{background:transparent}
+/* Staff shell */
+.staff{display:grid;grid-template-columns:200px 1fr;min-height:520px}
+.side{background:#16283F;color:#D3DEEA;padding:18px 12px}
+.side .wordmark{color:#fff;font-size:15px;margin-bottom:22px}
+.side .crest{width:22px;height:22px;font-size:12px}
+.side a{display:flex;justify-content:space-between;padding:8px 10px;border-radius:6px;color:#D3DEEA;text-decoration:none;margin-bottom:2px}
+.side a.on{background:#27415F;color:#fff;font-weight:600}
+.side .cnt{background:#B7811A;color:#fff;border-radius:999px;font-size:11px;padding:0 7px}
+.side .foot{margin-top:28px;border-top:1px solid #2A3F5A;padding-top:14px;font-size:12px;color:#9FB2C8}
+.top{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:#fff;border-bottom:1px solid var(--u-line)}
+.top h5{margin:0;font-size:18px;font-family:"Source Serif 4",Georgia,serif}
+.who-pill{display:flex;align-items:center;gap:8px;color:var(--u-mut)}
+.av{width:28px;height:28px;border-radius:50%;background:#D9E4F0;color:var(--u-brand);display:grid;place-items:center;font-weight:700;font-size:12px}
+.stat{font-family:"Source Serif 4",Georgia,serif;font-size:34px;font-weight:700;line-height:1;margin:4px 0}
+.barrow{display:grid;grid-template-columns:100px 1fr 34px;gap:10px;align-items:center;margin:8px 0}
+.track{height:12px;background:#EEF1EF;border-radius:3px;overflow:hidden}.track i{display:block;height:100%}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--u-line);margin-bottom:14px}
+.tabs span{padding:8px 12px;color:var(--u-mut);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs span.on{color:var(--u-ink);font-weight:600;border-color:var(--u-brand)}
+.toolbar{display:flex;gap:10px;align-items:center;margin-bottom:12px;position:relative}
+.toolbar .in{min-width:0;flex:1}
+.drop{border:1.5px dashed #9FB3A9;border-radius:8px;padding:14px;background:#F6F9FC;text-align:center;color:var(--u-mut)}
+.file{display:flex;align-items:center;gap:10px;border:1px solid var(--u-line);border-radius:7px;padding:9px 11px;background:#fff;margin-top:8px}
+.ficon{width:30px;height:36px;border-radius:4px;background:#F6E1DE;color:#8A2A20;display:grid;place-items:center;font-size:10px;font-weight:700}
+.timeline{list-style:none;margin:0;padding:0}
+.timeline li{display:grid;grid-template-columns:26px 1fr;gap:12px;padding-bottom:18px;position:relative}
+.timeline li::before{content:"";position:absolute;left:12px;top:24px;bottom:0;width:2px;background:var(--u-line)}
+.timeline li:last-child::before{display:none}
+.dot{width:26px;height:26px;border-radius:50%;border:2px solid var(--u-line);background:#fff;display:grid;place-items:center;font-size:12px;font-weight:700}
+.dot.done{background:var(--u-brand);border-color:var(--u-brand);color:#fff}
+.dot.now{border-color:var(--u-gold);color:var(--u-gold)}
+.docview{background:#E9EDEB;border-radius:8px;padding:16px;height:300px;position:relative}
+.page{background:#fff;width:74%;margin:0 auto;height:100%;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.08);font-size:10px;color:#555}
+.page .ln{height:6px;background:#E5E9E7;border-radius:2px;margin:7px 0}
+.code{background:#15202E;color:#D5E7DE;border-radius:8px;padding:14px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;white-space:pre;overflow:auto;line-height:1.5}
+.code .k{color:#E0B45A}.code .s{color:#9FD3B8}
+.evcard{border:1px solid var(--u-line);border-radius:8px;background:#fff;position:relative}
+.evdate{border-radius:7px 7px 0 0;background:#E8EEF6;padding:12px 14px;display:flex;gap:12px;align-items:center}
+.evdate b{font-family:"Source Serif 4",Georgia,serif;font-size:26px;color:var(--u-brand);line-height:1}
+.evbody{padding:12px 14px}
+.evcard.sel{outline:2px solid var(--u-gold)}
+.seg{display:inline-flex;border:1px solid #C5CEC9;border-radius:6px;overflow:hidden}
+.seg span{padding:6px 12px;background:#fff;white-space:nowrap}.seg span.on{background:var(--u-brand);color:#fff}
+.sso{max-width:380px;margin:30px auto;background:#fff;border:1px solid var(--u-line);border-radius:10px;padding:26px;position:relative}
+
+.pbanner{display:flex;flex-wrap:wrap;align-items:center;gap:8px 22px;background:#fff;border-bottom:1px solid var(--u-line);padding:12px 24px;position:relative}
+.pbanner .nm{font-family:"Source Serif 4",Georgia,serif;font-size:19px;font-weight:700}
+.pbanner .kv{color:var(--u-mut);font-size:12px}.pbanner .nm{white-space:nowrap}.pbanner .kv b{white-space:nowrap;display:block;color:var(--u-ink);font-size:13px}
+.risk{display:inline-flex;align-items:center;gap:6px;background:#B3372B;color:#fff;border-radius:6px;padding:5px 10px;font-weight:700;font-size:12px}
+.risk.med{background:#B7811A}.risk.low{background:#5F6D67}
+.stale{background:#FBF1DC;border-bottom:1px solid #EACB8C;color:#6E4C0E;padding:8px 24px;display:flex;gap:10px;align-items:center}
+.sec-h{font-weight:700;font-size:13px;margin:0 0 8px;display:flex;justify-content:space-between;align-items:center}
+.list{margin:0;padding:0;list-style:none}.list li{padding:7px 0;border-bottom:1px solid #EEF1EF}.list li:last-child{border:0}
+.modal{background:#fff;border:1px solid #D9B0A9;border-top:4px solid #B3372B;border-radius:8px;padding:16px;box-shadow:0 14px 30px -12px rgba(0,0,0,.35);position:relative}
+.spin{width:14px;height:14px;border:2px solid #B8CCE2;border-top-color:#23476D;border-radius:50%;display:inline-block}
+.cnt-note{font-size:11px;color:var(--u-mut);text-align:right;margin-top:3px}
+.letter{background:#fff;border:1px solid var(--u-line);border-radius:4px;padding:18px 22px;font-family:"Source Serif 4",Georgia,serif;font-size:12.5px;line-height:1.55;box-shadow:0 2px 8px rgba(0,0,0,.06);position:relative}
+.pill{display:inline-block;border:1px solid var(--u-line);border-radius:999px;padding:3px 10px;margin:0 6px 6px 0;background:#fff}
+.pill.on{background:#E8EEF6;border-color:#9DB5D3;font-weight:600}
+.statusbar{display:flex;justify-content:space-between;background:#EEF2F6;border-top:1px solid var(--u-line);padding:6px 16px;font-size:11.5px;color:var(--u-mut)}
+.side a{font-size:12.5px;align-items:center}
+</style>
+<style>
+/* Prototype-specific additions */
+html,body{height:100%}
+body{margin:0;background:#E9EDF2;font-family:"Public Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+#app.frame{border:0;border-radius:0;min-width:0;box-shadow:none;min-height:100%;display:flex;flex-direction:column;font-size:13.5px}
+.proto-bar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#0F1B2A;color:#C9D6E6;padding:8px 16px;padding-top:calc(8px + env(safe-area-inset-top,0px));font-size:12.5px}
+.proto-bar b{color:#fff;font-weight:600}
+.proto-bar select,.proto-bar button{white-space:nowrap;font:inherit;font-size:12px;background:#1E2F45;color:#fff;border:1px solid #37506F;border-radius:5px;padding:4px 8px;cursor:pointer}
+.proto-bar .sp{margin-left:auto;display:flex;gap:8px;align-items:center}
+.view{flex:1;display:flex;flex-direction:column}
+.staff{flex:1}
+input.in,select.in,textarea.in{width:100%;font:inherit;color:var(--u-ink);box-sizing:border-box;display:block}
+textarea.in{resize:vertical;min-height:70px}
+select.in{appearance:none;-webkit-appearance:none;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%235F6D67'/%3E%3C/svg%3E") no-repeat right 10px center;padding-right:28px}
+.in:focus{outline:2px solid #9DB5D3;outline-offset:0;border-color:#5C82B0}
+button.btn{cursor:pointer;font:inherit;font-weight:600}
+button.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:focus-visible,.seg button:focus-visible,.side a:focus-visible,tr[data-go]:focus-visible{outline:2px solid #B7811A;outline-offset:2px}
+.seg button{font:inherit;border:0;padding:6px 12px;background:#fff;color:var(--u-ink);cursor:pointer;white-space:nowrap}
+.seg button+button{border-left:1px solid #C5CEC9}
+.sec-h .seg button{font-size:12.5px;font-weight:500}
+.seg button.on{background:var(--u-brand);color:#fff}
+.seg button:disabled{color:#AAB3BF;cursor:not-allowed}
+.seg.bad{box-shadow:0 0 0 2px #F3D6D2;border-color:var(--u-red)}
+.side a{cursor:pointer}
+tr[data-go]{cursor:pointer}
+tr[data-go]:hover td{background:#F3F6FA}
+.chk input,.tbl input[type=checkbox],.card input[type=checkbox]{accent-color:#1F3F66;width:16px;height:16px;margin:1px 0 0;flex:none}
+.chk{cursor:pointer}
+label.drop{display:block;cursor:pointer}
+label.drop:hover{background:#EEF3FA}
+.hidden{display:none!important}
+#toasts{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:8px;z-index:50;max-width:380px}
+#toasts .toast{box-shadow:0 10px 24px -10px rgba(0,0,0,.35);animation:tin .18s ease-out}
+@keyframes tin{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion: reduce){#toasts .toast{animation:none}}
+.empty{border:1.5px dashed #C3CEDB;border-radius:8px;padding:22px;text-align:center;color:var(--u-mut);background:#FAFBFD}
+.placeholder{max-width:560px;margin:40px auto;text-align:center}
+.linkish{background:none;border:0;padding:0;color:var(--u-brand);font:inherit;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.steplist li{transition:color .2s}
+.steplist li.wait{color:#9AA6B2}
+.stepadd{display:grid;grid-template-columns:150px 140px 1fr auto;gap:8px;margin-top:12px;align-items:end}
+.sso{margin:40px auto}
+.phone{background:#1d1f22;border-radius:26px;padding:12px;max-width:280px}
+.phone .screen{background:#fff;border-radius:16px;padding:14px;min-height:300px}
+.bubble{background:#E8EEF6;border-radius:12px;padding:10px;font-size:12.5px;margin-bottom:8px}
+@media (max-width:860px){
+  .staff{grid-template-columns:1fr}
+  .side{display:flex;gap:4px;overflow-x:auto;padding:8px}
+  .side .wordmark,.side .foot{display:none}
+  .side a{white-space:nowrap;margin:0}
+  .grid2,.grid3{grid-template-columns:1fr!important}
+  .body{padding:16px}
+  .pubnav{flex-wrap:wrap;gap:10px 16px;padding:12px 16px}
+  .tbl{overflow-x:auto}
+  .stepadd{grid-template-columns:1fr}
+  .grid3.stats{grid-template-columns:1fr 1fr!important}
+  .top{flex-wrap:wrap;gap:8px}
+}
+</style>
+</head>
+<body>
+<div id="app" class="frame">
+  <div class="proto-bar">
+    <span><b>Mentcare prototype</b>, Admissions and Outreach block (Team 4)</span>
+    <span class="sp">
+      <label for="roleSel">Viewing as</label>
+      <select id="roleSel">
+        <option value="signin">Sign-in page</option>
+        <option value="referrer">Referrer: Dr Sarah Ahmed</option>
+        <option value="intake">Intake coordinator: Lorna Kerr</option>
+        <option value="triage">Triage clinician: Dr Ewan Fraser</option>
+        <option value="public">Patient and carer</option>
+      </select>
+      <button id="resetBtn" type="button">Reset demo data</button>
+    </span>
+  </div>
+  <div class="view" id="view"></div>
+  <div class="statusbar"><span>Mentcare, Mid-Scotland Health Authority</span><span>Supported browser: Firefox. Service hours 08:00 to 18:30, Monday to Friday</span></div>
+</div>
+<div id="toasts" aria-live="polite"></div>
+
+<script>
+(function(){
+'use strict';
+/* ---------------- data ---------------- */
+function seed(){
+  return {
+    nextRef: 918, nextSession: 4, nextId: 813,
+    referrals: [
+      {id:'R-2026-0917', name:'', desc:'Male, about 40, no NHS number', dob:'', nhs:'', address:'Not known', phone:'', carer:'', reason:'Brought in by police after being found distressed on the Queen\u2019s Bridge. Calmer now, declined to give name. Requests follow-up by mental health team.', urgency:'Urgent', risk:'Significant', source:'ae', sourceLabel:'A&E, Perth Royal', referrer:'Dr Neil Grant, A&E', received:'Today 08:12', status:'received', docsReviewed:false, doc:'ae_discharge_note.pdf', consent:{sms:false,email:false,carer:false}, notes:[]},
+      {id:'R-2026-0913', name:'Rory Buchanan', desc:'', dob:'03/07/1997', nhs:'723 004 1187', address:'22 Glover Street, Perth PH2 0JB', phone:'07712 345678', carer:'Anne Buchanan (mother), 01738 552 190', reason:'Low mood for 4 months, withdrawn from work and friends, poor sleep. No response to 8 weeks of citalopram 20 mg. Requests specialist assessment.', urgency:'Soon', risk:'None known', source:'gp', sourceLabel:'GP, Tay Street', referrer:'Dr Sarah Ahmed', received:'Yesterday', status:'received', docsReviewed:true, doc:'referral_letter_buchanan.pdf', consent:{sms:true,email:false,carer:true}, match:{name:'Rory Buchanan', dob:'11 Feb 1968', nhs:'402 118 7736', seen:'Seen at Stirling clinic, last consultation March 2023'}, notes:[]},
+      {id:'R-2026-0910', name:'Eilidh Brown', desc:'', dob:'19/05/1989', nhs:'108 223 5671', address:'4 Mill Wynd, Perth PH1 5QA', phone:'07845 110 223', carer:'', reason:'Discharged from ward 7 after overdose-related admission. Needs community follow-up and review of medication.', urgency:'Soon', risk:'Some concern', source:'hosp', sourceLabel:'Hospital, ward 7', referrer:'Dr Priya Nair, ward 7', received:'24 Sep', status:'received', docsReviewed:false, doc:'discharge_summary_brown.pdf', consent:{sms:true,email:true,carer:false}, notes:[]},
+      {id:'R-2026-0904', name:'Graham Hay', desc:'', dob:'22/11/1974', nhs:'559 610 2208', address:'7 Comrie Road, Crieff PH7 4BJ', phone:'07700 900 441', carer:'Susan Hay (wife)', reason:'Increasing anxiety and panic attacks affecting work. Would like talking therapy options.', urgency:'Routine', risk:'None known', source:'gp', sourceLabel:'GP, Crieff', referrer:'Dr Iain Murray', received:'23 Sep', status:'received', docsReviewed:true, doc:'referral_hay.pdf', consent:{sms:true,email:true,carer:true}, notes:[]},
+      {id:'R-2026-0899', name:'Callum Doig', desc:'', dob:'08/02/2001', nhs:'330 845 1902', address:'15 Atholl Street, Perth PH1 5NH', phone:'07911 204 118', carer:'', reason:'Hearing voices for 3 weeks, not sleeping. Family worried. First presentation.', urgency:'Urgent', risk:'Some concern', source:'gp', sourceLabel:'GP, Tay Street', referrer:'Dr Sarah Ahmed', received:'22 Sep', status:'triage', docsReviewed:true, doc:'referral_doig.pdf', consent:{sms:true,email:false,carer:false}, assignedTo:'Dr Ewan Fraser', notes:[]},
+      {id:'R-2026-0895', name:'Iona Park', desc:'', dob:'30/09/1992', nhs:'771 002 3348', address:'2 Rose Terrace, Perth PH1 5HA', phone:'07555 781 002', carer:'', reason:'Postnatal low mood, 3 months after birth. Some intrusive thoughts.', urgency:'Soon', risk:'None known', source:'gp', sourceLabel:'GP, Tay Street', referrer:'Dr Sarah Ahmed', received:'15 Sep', status:'info', docsReviewed:true, doc:'referral_park.pdf', consent:{sms:true,email:true,carer:false}, question:'Please confirm current medication and whether the health visitor is involved.', notes:[]}
+    ],
+    patients: [
+      {name:'Isla McKenzie', ident:'NHS 211 004 8812', phone:'07712 002 931', carer:'', consent:{sms:true,email:true,carer:false}, clinic:'Perth day clinic', consultant:'K. Munro', appt:'Mon 28 Sep, 11:45'},
+      {name:'Duncan Paterson', ident:'NHS 604 551 2290', phone:'07700 118 540', carer:'Mary Paterson (sister)', consent:{sms:false,email:false,carer:true}, clinic:'Perth day clinic', consultant:'Dr A. Ross', appt:'Wed 30 Sep, 10:00'}
+    ],
+    messages: [
+      {to:'Isla McKenzie', channel:'Text', text:'Perth Day Clinic: reminder of your appointment on Mon 28 Sep at 11:45. To rebook call 01738 473 000.', when:'27 Sep, 11:45', status:'Delivered'}
+    ],
+    slots: ['Tue 6 Oct, 09:30','Thu 8 Oct, 14:00','Mon 12 Oct, 10:15','Wed 14 Oct, 11:00'],
+    sequences: [
+      {id:'appt', name:'Appointment reminders', active:true, count:142, trigger:'an appointment is booked', stop:'the appointment is cancelled or the patient is discharged', steps:[{delay:'7 days before',channel:'Letter',text:'Appointment details and how to rebook.'},{delay:'1 day before',channel:'Text',text:'"Reminder of your appointment tomorrow. To rebook call 01738 473 000." No clinical details.'}]},
+      {id:'missed', name:'Missed appointment follow-up', active:true, count:9, trigger:'an appointment is marked Did not attend', stop:'the patient rebooks, is discharged, or is detained under the Mental Health Act', steps:[{delay:'Same day',channel:'Text',text:'"We missed you today. Please call 01738 473 000 to rebook." No clinical details.'},{delay:'After 2 days',channel:'Staff task',text:'Phone call task for intake coordinator, if not rebooked.'},{delay:'After 5 days',channel:'Letter',text:'Letter to patient with a new appointment offer, if not rebooked.'},{delay:'After a second miss',channel:'Email',text:'Email to responsible consultant.'}]},
+      {id:'carer', name:'Carer session reminders', active:false, count:0, trigger:'a carer registers for an event', stop:'the event has taken place', steps:[{delay:'2 days before',channel:'Text',text:'Reminder of the carer information evening.'}]}
+    ],
+    sessions: [
+      {id:'S1', name:'Carer information evening', type:'Carer event', date:'15 Oct', time:'18:30', places:30, where:'Perth Day Clinic, meeting room 2', pub:true, extra:15, regs:[{name:'Anne Buchanan',rel:'Carer',att:false},{name:'Eilidh Campbell',rel:'Carer',att:false},{name:'Ross Taylor',rel:'Family member',att:false}]},
+      {id:'S2', name:'Group CBT for anxiety, 6 weeks', type:'Group', date:'From 7 Oct', time:'10:00', places:8, where:'Perth Day Clinic, group room', pub:false, extra:5, waiting:3, regs:[{name:'Graham Reid',rel:'Patient',att:false},{name:'Isla McKenzie',rel:'Patient',att:false},{name:'Neil Campbell',rel:'Patient',att:false}]},
+      {id:'S3', name:'Friday drop-in', type:'Drop-in', date:'Weekly', time:'13:00', places:0, where:'Perth Day Clinic', pub:false, extra:0, regs:[]}
+    ],
+    pipe: {received:64, triaged:58, accepted:49, attended:41, gp:38, ae:17, hosp:9, missed:8, rebooked:6, carerRegs:41},
+    referrerNotes: []
+  };
+}
+var KEY='mentcare-ao-proto-v1';
+var S;
+function load(){ try{ var raw=localStorage.getItem(KEY); S = raw? JSON.parse(raw) : seed(); }catch(e){ S=seed(); } }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+load();
+
+var route = {role:'signin', page:'signin', id:null, sel:null, step:1};
+var draft = {}; // transient per-screen state
+
+/* ---------------- helpers ---------------- */
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function $(sel,root){ return (root||document).querySelector(sel); }
+function $all(sel,root){ return Array.prototype.slice.call((root||document).querySelectorAll(sel)); }
+function toast(kind, html){
+  var t=document.createElement('div'); t.className='toast '+kind; t.innerHTML=(kind==='ok'?'<b>\u2713</b>':kind==='bad'?'<b>!</b>':'')+'<div>'+html+'</div>';
+  var box=$('#toasts'); box.appendChild(t); while(box.children.length>3) box.firstChild.remove(); setTimeout(function(){ t.remove(); }, 3800);
+}
+function ref(id){ return S.referrals.filter(function(r){return r.id===id;})[0]; }
+function pname(r){ return r.name ? esc(r.name) : 'Name not given'; }
+function prioChip(p){ var c = p==='Urgent'?'c-hi':p==='Soon'?'c-med':'c-lo'; return '<span class="chip '+c+'">'+esc(p)+'</span>'; }
+function prio(r){ return r.priority || r.urgency; }
+var PR={Urgent:0,Soon:1,Routine:2};
+var STATUS={received:'Received', triage:'With triage', info:'Waiting for information', accepted:'Accepted', redirected:'Redirected', admitted:'Admitted'};
+var REFSTATUS={received:['Received','c-sub'], triage:['Under review','c-rev'], info:['More info needed','c-rev'], accepted:['Accepted','c-acc'], admitted:['Accepted','c-acc'], redirected:['Redirected','c-rej']};
+function segHtml(name, opts, val, disabled){
+  return '<div class="seg" data-seg="'+name+'" role="group">'+opts.map(function(o){
+    var dis = disabled && disabled.indexOf(o)>=0;
+    return '<button type="button" data-val="'+esc(o)+'" class="'+(o===val?'on':'')+'" aria-pressed="'+(o===val)+'"'+(dis?' disabled':'')+'>'+esc(o)+'</button>';
+  }).join('')+'</div>';
+}
+function segVal(name){ var b=$('[data-seg="'+name+'"] button.on'); return b? b.getAttribute('data-val') : ''; }
+function go(page, id){ route.page=page; route.id=id||null; draft={}; render(); window.scrollTo(0,0); }
+
+/* ---------------- shells ---------------- */
+var NAVS = {
+  intake: {label:'Intake coordinator', user:['LK','Lorna Kerr'], items:[['inbox','Referral inbox'],['admit-list','New patients'],['outreach','Outreach messages'],['sequences','Reminder sequences'],['sessions','Sessions and events'],['pipeline','Pipeline overview']]},
+  triage: {label:'Triage clinician', user:['EF','Dr Ewan Fraser'], items:[['triage-list','Referrals to triage'],['find','Find a patient'],['clinic',"Today's clinic"]]}
+};
+function counts(){
+  return {
+    inbox: S.referrals.filter(function(r){return r.status==='received';}).length,
+    'admit-list': S.referrals.filter(function(r){return r.status==='accepted';}).length,
+    'triage-list': S.referrals.filter(function(r){return r.status==='triage';}).length
+  };
+}
+function staffShell(role, active, title, right, body, banner){
+  var n=NAVS[role], c=counts();
+  var links=n.items.map(function(it){
+    var cnt = c[it[0]] ? ' <span class="cnt">'+c[it[0]]+'</span>' : '';
+    return '<a tabindex="0" role="link" data-nav="'+it[0]+'" class="'+(it[0]===active?'on':'')+'">'+it[1]+cnt+'</a>';
+  }).join('');
+  return '<div class="staff"><nav class="side" aria-label="Main menu"><div class="wordmark"><span class="crest">M</span>Mentcare</div>'+links+
+    '<div class="foot">Signed in as<br><b style="color:#fff">'+n.user[1]+'</b><br>'+n.label+'<br><button class="linkish" style="color:#9FB2C8;margin-top:8px" data-act="signout">Sign out</button></div></nav>'+
+    '<div style="min-width:0"><div class="top"><h5>'+title+'</h5><span class="who-pill">'+(right||'<span class="av">'+n.user[0]+'</span>'+n.user[1])+'</span></div>'+(banner||'')+'<div class="body">'+body+'</div></div></div>';
+}
+function refBanner(r){
+  return '<div class="pbanner"><div><div class="nm">'+pname(r)+'</div><span class="muted">'+(r.desc?esc(r.desc)+'. ':'')+'Referral '+r.id+'</span></div>'+
+    '<div class="kv">NHS number<b>'+(r.nhs?esc(r.nhs):'Not given')+'</b></div><div class="kv">Date of birth<b>'+(r.dob?esc(r.dob):'Not given')+'</b></div><div class="kv">Referred by<b>'+esc(r.referrer)+'</b></div>'+
+    '<span style="margin-left:auto">'+prioChip(prio(r)).replace('">','">Priority: ')+(r.risk==='Significant'?' <span class="risk" style="font-size:11px;padding:3px 8px">Significant risk</span>':'')+'</span></div>';
+}
+function pubnav(active){
+  return '<div class="pubnav"><div class="wordmark"><span class="crest">M</span>Mentcare referrals</div>'+
+    '<a tabindex="0" data-nav="ref-new" class="'+(active==='ref-new'?'on':'')+'" style="cursor:pointer">New referral</a>'+
+    '<a tabindex="0" data-nav="ref-mine" class="'+(active==='ref-mine'?'on':'')+'" style="cursor:pointer">My referrals</a>'+
+    '<span class="who-pill" style="color:#D6E2EF"><span class="av">SA</span>Dr Sarah Ahmed, Tay Street Medical Practice</span>'+
+    '<button class="btn-ghost linkish" style="color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.5);border-radius:6px;padding:5px 12px" data-act="signout">Sign out</button></div>';
+}
+
+/* ---------------- pages ---------------- */
+var P = {};
+
+P.signin = function(){
+  var acct = draft.acct || 'intake';
+  var users = {referrer:'sahmed', intake:'lkerr', triage:'efraser'};
+  if(route.step===2){
+    return '<div class="body" style="background:#EDF1F6;flex:1"><div class="sso"><div class="wordmark" style="color:var(--u-brand);margin-bottom:4px"><span class="crest" style="background:var(--u-brand);color:#fff">M</span>Mid-Scotland Health Authority</div>'+
+      '<p class="muted" style="margin:0 0 16px">Step 2 of 2. Answer your security question</p>'+
+      '<div class="fld"><label class="lbl" for="q">What was the name of your first school?</label><input class="in" id="q" type="password" value="primary"></div>'+
+      '<button class="btn" style="width:100%;justify-content:center" data-act="signin2">Sign in</button>'+
+      '<p style="margin:14px 0 0;text-align:center"><button class="linkish" data-act="signback">Back</button></p></div></div>';
+  }
+  return '<div class="body" style="background:#EDF1F6;flex:1"><div class="sso"><div class="wordmark" style="color:var(--u-brand);margin-bottom:4px"><span class="crest" style="background:var(--u-brand);color:#fff">M</span>Mid-Scotland Health Authority</div>'+
+    '<p class="muted" style="margin:0 0 16px">Sign in to <b style="color:var(--u-ink)">Mentcare</b>. Step 1 of 2</p>'+
+    '<div class="fld"><label class="lbl" for="acct">Demo account</label><select class="in" id="acct">'+
+      '<option value="referrer"'+(acct==='referrer'?' selected':'')+'>Dr Sarah Ahmed, GP (referrer)</option>'+
+      '<option value="intake"'+(acct==='intake'?' selected':'')+'>Lorna Kerr (intake coordinator)</option>'+
+      '<option value="triage"'+(acct==='triage'?' selected':'')+'>Dr Ewan Fraser (triage clinician)</option></select></div>'+
+    '<div class="fld"><label class="lbl" for="un">Username</label><input class="in" id="un" value="'+users[acct]+'"></div>'+
+    '<div class="fld"><label class="lbl" for="pw">Password</label><input class="in" id="pw" type="password" value="demo-password"></div>'+
+    '<button class="btn" style="width:100%;justify-content:center" data-act="signin1">Continue</button>'+
+    '<p style="margin:16px 0 0;text-align:center" class="muted">Patient or carer? <button class="linkish" data-act="role" data-role="public">See what you receive</button></p></div></div>';
+};
+
+/* ----- referrer ----- */
+P['ref-new'] = function(){
+  var e = draft.err || {}, v = draft.vals || {};
+  function f(id,label,req,val,ph,type){
+    return '<div class="fld"><label class="lbl" for="'+id+'">'+label+(req?' *':'')+'</label><input class="in'+(e[id]?' err':'')+'" id="'+id+'" value="'+esc(val||'')+'" placeholder="'+(ph||'')+'"'+(type?' inputmode="'+type+'"':'')+'>'+(e[id]?'<div class="errtxt">'+e[id]+'</div>':'')+'</div>';
+  }
+  var errCount = Object.keys(e).length;
+  var body =
+  '<div class="body grid2" style="grid-template-columns:1.6fr 1fr">'+
+  '<div class="card"><h4 class="ui-h">New referral to mental health services</h4><p class="sub">Fields marked * are required.</p>'+
+  '<p class="lbl" style="font-size:14px;margin:4px 0 10px">Patient</p>'+
+  '<div class="row">'+f('rName','Full name',1,v.rName)+f('rDob','Date of birth',1,v.rDob,'DD/MM/YYYY','numeric')+f('rNhs','NHS number',0,v.rNhs,'If known','numeric')+'</div>'+
+  '<div class="row">'+f('rAddr','Address',1,v.rAddr)+f('rPhone','Mobile phone',0,v.rPhone,'07712 345678','tel')+'</div>'+
+  f('rCarer','Next of kin or carer',0,v.rCarer,'Name, relationship, phone')+
+  '<p class="lbl" style="font-size:14px;margin:4px 0 10px">Reason for referral</p>'+
+  '<div class="fld"><label class="lbl" for="rReason" style="position:absolute;left:-9999px">Reason for referral</label><textarea class="in'+(e.rReason?' err':'')+'" id="rReason" maxlength="2000" data-count="rCount" placeholder="Symptoms, history, and treatment tried so far">'+esc(v.rReason||'')+'</textarea><div class="cnt-note" id="rCount">'+((v.rReason||'').length)+' of 2,000 characters</div>'+(e.rReason?'<div class="errtxt">'+e.rReason+'</div>':'')+'</div>'+
+  '<div class="row"><div class="fld"><span class="lbl">Urgency *</span>'+segHtml('urg',['Routine','Soon','Urgent'],v.urg).replace('class="seg"','class="seg'+(e.urg?' bad':'')+'"')+(e.urg?'<div class="errtxt">'+e.urg+'</div>':'')+'</div>'+
+  '<div class="fld"><span class="lbl">Risk of harm to self or others *</span>'+segHtml('risk',['None known','Some','Significant'],v.risk).replace('class="seg"','class="seg'+(e.risk?' bad':'')+'"')+(e.risk?'<div class="errtxt">'+e.risk+'</div>':'')+'</div></div>'+
+  '</div><div>'+
+  '<div class="card"><h4>Documents</h4><p class="sub">Referral letter and any recent reports. PDF or image, up to 10 MB each.</p>'+
+  '<label class="drop" for="rFile">Drag files here or <b style="color:var(--u-brand)">choose files</b><input type="file" id="rFile" class="hidden" accept=".pdf,image/*"></label>'+
+  '<div id="fileSlot">'+(draft.file?'<div class="file"><span class="ficon">PDF</span><div style="flex:1"><b>'+esc(draft.file)+'</b><br><span class="muted">Attached</span></div><button class="linkish" data-act="rmfile">Remove</button></div>':'')+'</div></div>'+
+  '<div class="card" style="margin-top:14px"><h4>Contact consent</h4>'+
+  '<label class="chk"><input type="checkbox" id="cSms"'+(v.cSms!==false?' checked':'')+'><span>Patient agrees to be contacted by text message</span></label>'+
+  '<label class="chk"><input type="checkbox" id="cEmail"'+(v.cEmail?' checked':'')+'><span>Patient agrees to be contacted by email</span></label>'+
+  '<label class="chk"><input type="checkbox" id="cCarer"'+(v.cCarer?' checked':'')+'><span>Patient agrees that their carer may be contacted</span></label>'+
+  '<button class="btn" data-act="sendref">Send referral</button>'+
+  (errCount?'<div class="toast bad" style="margin-top:12px"><b>!</b><div>'+errCount+' field'+(errCount>1?'s need':' needs')+' attention: '+Object.keys(e).map(function(k){return LABELS[k];}).join(', ')+'.</div></div>':'')+
+  '<p style="margin:12px 0 0"><button class="linkish" data-act="fillref">Fill with sample patient</button></p></div>'+
+  '<p class="muted" style="margin:12px 2px 0">For a referral where the patient is at immediate risk, also phone the duty clinician.</p></div></div>';
+  return pubnav('ref-new')+body;
+};
+var LABELS={rName:'Full name',rDob:'Date of birth',rNhs:'NHS number',rAddr:'Address',rPhone:'Mobile phone',rReason:'Reason for referral',urg:'Urgency',risk:'Risk'};
+
+P['ref-mine'] = function(){
+  var mine = S.referrals.filter(function(r){return r.referrer==='Dr Sarah Ahmed';});
+  var rows = mine.map(function(r){
+    var st = REFSTATUS[r.status];
+    var open = route.sel===r.id;
+    var row = '<tr data-go="sel" data-id="'+r.id+'" tabindex="0"'+(open?' class="hl"':'')+'><td style="white-space:nowrap">'+r.id+'</td><td><b>'+pname(r)+'</b></td><td>'+esc(r.received)+'</td><td>'+prioChip(r.urgency)+'</td><td><span class="chip '+st[1]+'">'+st[0]+'</span></td></tr>';
+    if(open){
+      var detail = '';
+      if(r.status==='info') detail = '<p style="margin:0 0 8px"><b>The clinic asks:</b> '+esc(r.question)+'</p><label class="lbl" for="infoReply">Your reply</label><textarea class="in" id="infoReply" placeholder="Add the requested information"></textarea><button class="btn sm" style="margin-top:8px" data-act="inforeply" data-id="'+r.id+'">Send information</button>';
+      else if(r.decisionMsg) detail = '<p style="margin:0"><b>Message from the clinic:</b> '+esc(r.decisionMsg)+'</p>';
+      else detail = '<p class="muted" style="margin:0">'+(r.status==='received'?'Waiting to be reviewed by the intake team.':'A clinician is reviewing this referral.')+'</p>';
+      row += '<tr><td colspan="5" style="background:#F6F9FC">'+detail+'</td></tr>';
+    }
+    return row;
+  }).join('');
+  return pubnav('ref-mine')+'<div class="body"><div class="card"><h4 class="ui-h">My referrals</h4><p class="sub">Select a referral to see messages from the clinic.</p>'+
+    (mine.length?'<div class="tbl"><table class="t"><tr><th>Referral</th><th>Patient</th><th>Sent</th><th>Urgency</th><th>Status</th></tr>'+rows+'</table></div>':'<div class="empty">No referrals yet. <button class="linkish" data-nav="ref-new">Send a referral</button></div>')+'</div></div>';
+};
+
+/* ----- intake ----- */
+P.inbox = function(){
+  var tab = draft.tab || 'received', q=(draft.q||'').toLowerCase(), src=draft.src||'all';
+  var byStatus = function(s){ return S.referrals.filter(function(r){return r.status===s;}).length; };
+  var acceptedWeek = 10 + S.referrals.filter(function(r){return r.status==='accepted'||r.status==='admitted';}).length;
+  var list = S.referrals.filter(function(r){ return r.status===tab; })
+    .filter(function(r){ return !q || (r.name+' '+r.nhs+' '+r.id).toLowerCase().indexOf(q)>=0; })
+    .filter(function(r){ return src==='all' || r.source===src; })
+    .sort(function(a,b){ return (PR[prio(a)]-PR[prio(b)]) || (b.risk==='Significant')-(a.risk==='Significant'); });
+  var tabs=[['received','Received'],['triage','With triage'],['info','Waiting for information'],['accepted','Accepted'],['redirected','Redirected']];
+  var sel = route.sel && ref(route.sel);
+  var rows = list.map(function(r){
+    return '<tr data-go="sel" data-id="'+r.id+'" tabindex="0"'+(sel&&sel.id===r.id?' class="hl"':'')+'><td style="white-space:nowrap">'+r.id+'</td><td><b>'+pname(r)+'</b><br><span class="muted">'+(r.nhs?esc(r.nhs):esc(r.desc))+'</span></td><td>'+esc(r.sourceLabel)+'</td><td>'+esc(r.received)+'</td><td>'+prioChip(prio(r))+(r.risk!=='None known'?' <span class="risk" style="font-size:10.5px;padding:1px 6px">Risk</span>':'')+'</td><td>'+(r.docsReviewed?'Reviewed':'Not reviewed')+'</td></tr>';
+  }).join('');
+  var detail='';
+  if(sel){
+    detail = '<div class="card" style="margin-top:14px"><div class="sec-h" style="font-size:15px">'+sel.id+': '+pname(sel)+'<button class="linkish" data-act="closesel">Close</button></div>'+
+      '<div class="grid2" style="grid-template-columns:1.2fr 1fr"><div><span class="lbl">Reason for referral</span><p style="margin:0 0 10px">'+esc(sel.reason)+'</p>'+
+      '<div class="row"><div><span class="lbl">Urgency</span>'+esc(sel.urgency)+'</div><div><span class="lbl">Risk</span>'+esc(sel.risk)+'</div><div><span class="lbl">Referrer</span>'+esc(sel.referrer)+'</div></div></div>'+
+      '<div><div class="file" style="margin-top:0"><span class="ficon">PDF</span><div style="flex:1"><b>'+esc(sel.doc)+'</b></div><button class="btn sec sm" data-act="viewdoc">View</button></div>'+
+      '<label class="chk" style="margin:10px 0"><input type="checkbox" data-act="docrev" data-id="'+sel.id+'"'+(sel.docsReviewed?' checked':'')+'><span><b>Documents reviewed</b></span></label>'+
+      (sel.status==='received'?'<div class="row"><select class="in" id="assignTo"><option>Dr Ewan Fraser</option><option>Dr Anna Ross</option></select><button class="btn" style="flex:none" data-act="assign" data-id="'+sel.id+'">Assign for triage</button></div>':'<p class="muted" style="margin:0">Status: '+STATUS[sel.status]+(sel.assignedTo?', '+esc(sel.assignedTo):'')+'</p>')+
+      '</div></div></div>';
+  }
+  var body =
+  '<div class="grid3 stats" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px">'+
+    ['Received','With triage clinician','Waiting for information','Accepted this week'].map(function(l,i){
+      var val=[byStatus('received'),byStatus('triage'),byStatus('info'),acceptedWeek][i];
+      return '<div class="card" style="padding:12px 14px"><span class="muted">'+l+'</span><div class="stat" style="font-size:28px">'+val+'</div></div>';}).join('')+'</div>'+
+  '<div class="tabs" role="tablist">'+tabs.map(function(t){return '<span role="tab" tabindex="0" style="cursor:pointer" data-act="tab" data-tab="'+t[0]+'" class="'+(t[0]===tab?'on':'')+'">'+t[1]+' ('+byStatus(t[0])+')</span>';}).join('')+'</div>'+
+  '<div class="toolbar"><input class="in" id="inboxQ" placeholder="Search name, NHS number or referral number" value="'+esc(draft.q||'')+'"><select class="in" id="inboxSrc" style="max-width:200px"><option value="all">All sources</option><option value="gp"'+(src==='gp'?' selected':'')+'>GP</option><option value="ae"'+(src==='ae'?' selected':'')+'>A&amp;E</option><option value="hosp"'+(src==='hosp'?' selected':'')+'>Hospital</option></select></div>'+
+  (list.length?'<div class="tbl"><table class="t"><tr><th>Referral</th><th>Patient</th><th>Source</th><th>Received</th><th>Priority</th><th>Documents</th></tr>'+rows+'</table></div>':'<div class="empty">No referrals in this list.</div>')+detail;
+  return staffShell('intake','inbox','Referral inbox','',body);
+};
+
+P['admit-list'] = function(){
+  var acc = S.referrals.filter(function(r){return r.status==='accepted';});
+  var adm = S.patients;
+  var body = '<div class="card"><h4>Accepted referrals waiting for admission</h4>'+(acc.length?
+    '<div class="tbl" style="margin-top:10px"><table class="t"><tr><th>Referral</th><th>Patient</th><th>Priority</th><th>Clinic</th><th>Consultant</th><th></th></tr>'+acc.map(function(r){
+      return '<tr><td>'+r.id+'</td><td><b>'+pname(r)+'</b></td><td>'+prioChip(prio(r))+'</td><td>'+esc(r.clinic)+'</td><td>'+esc(r.consultant)+'</td><td><button class="btn sm" data-nav="admit" data-id="'+r.id+'">Admit</button></td></tr>';}).join('')+'</table></div>'
+    :'<div class="empty" style="margin-top:10px">No accepted referrals are waiting. Referrals appear here after a triage clinician accepts them. Try signing in as Dr Ewan Fraser and accepting one.</div>')+'</div>'+
+    '<div class="card" style="margin-top:14px"><h4>Recently admitted</h4><div class="tbl" style="margin-top:10px"><table class="t"><tr><th>Patient</th><th>Identifier</th><th>Clinic</th><th>First appointment</th></tr>'+adm.map(function(p){return '<tr><td><b>'+esc(p.name)+'</b></td><td>'+esc(p.ident)+'</td><td>'+esc(p.clinic)+'</td><td>'+esc(p.appt)+'</td></tr>';}).join('')+'</table></div></div>';
+  return staffShell('intake','admit-list','New patients','',body);
+};
+
+P.admit = function(){
+  var r = ref(route.id);
+  if(!r) return P['admit-list']();
+  var d = draft;
+  if(!d.ident){ d.ident = r.nhs ? 'NHS '+r.nhs : 'MC-000'+S.nextId; }
+  var done = d.done||0;
+  var steps = ['Record sent to patient records','Appointment booked in APPOINTMENTS','Welcome letter and reminders started','Referrer notified'];
+  var body =
+  '<div class="grid3" style="grid-template-columns:1fr 1fr 1.15fr">'+
+  '<div class="card"><h4>Patient record</h4><p class="sub">Filled in from referral '+r.id+'</p>'+
+    '<div class="fld"><label class="lbl" for="aId">Patient identifier</label><input class="in" id="aId" value="'+esc(d.ident)+'" readonly></div>'+
+    '<div class="fld"><label class="lbl" for="aName">Full name</label><input class="in" id="aName" value="'+esc(d.name!=null?d.name:r.name)+'" placeholder="Required"></div>'+
+    '<div class="fld"><label class="lbl" for="aAddr">Address</label><input class="in" id="aAddr" value="'+esc(r.address)+'"></div>'+
+    '<div class="fld"><label class="lbl" for="aPhone">Mobile</label><input class="in" id="aPhone" value="'+esc(r.phone)+'"></div>'+
+    '<div class="fld"><label class="lbl" for="aCarer">Family contact</label><input class="in" id="aCarer" value="'+esc(r.carer)+'"></div>'+
+    (r.nhs?'':'<p class="muted" style="margin:0">No NHS number, so Mentcare generated this unique ID.</p>')+'</div>'+
+  '<div class="card"><h4>First appointment</h4><p class="sub">Free slots from APPOINTMENTS, '+esc(r.clinic)+', '+esc(r.consultant)+'</p>'+
+    (d.booked?'<div class="toast ok"><b>\u2713</b><div>Booked: <b>'+esc(d.booked)+'</b></div></div>':
+    S.slots.map(function(s,i){return '<label class="chk" style="margin:6px 0"><input type="radio" name="slot" value="'+esc(s)+'"'+(i===1?' checked':'')+'><span>'+esc(s)+'</span></label>';}).join('')+
+    '<button class="btn sm" style="margin-top:8px" data-act="book">Book selected slot</button>')+'</div>'+
+  '<div class="card"><h4>Admission</h4><p class="sub">Clinic: '+esc(r.clinic)+'. Consultant: '+esc(r.consultant)+'. First appointment: '+(d.booked?esc(d.booked):'not booked yet')+'.</p>'+
+    '<button class="btn" data-act="admit" data-id="'+r.id+'"'+(d.booked&&!done?'':' disabled')+'>Admit patient</button>'+
+    (!d.booked?'<p class="muted" style="margin:8px 0 0">Book a first appointment before admitting.</p>':'')+
+    '<ul class="list steplist" style="margin-top:10px">'+steps.map(function(s,i){return '<li class="'+(i<done?'':'wait')+'" style="'+(i<done?'color:#1D5A3E':'')+'">'+(i<done?'\u2713 ':'\u25CB ')+s+'</li>';}).join('')+'</ul>'+
+    (done>=4?'<button class="btn sec sm" style="margin-top:8px" data-nav="outreach">Go to outreach messages</button>':'')+
+    '<div class="code" style="margin-top:12px;font-size:10.5px;white-space:pre-wrap"><span class="k">POST</span> /api/patients\n{ <span class="s">"patientId"</span>: <span class="s">"'+esc(d.ident.replace(/^NHS |\s/g,''))+'"</span>,\n  <span class="s">"referralId"</span>: <span class="s">"'+r.id+'"</span>,\n  <span class="s">"clinic"</span>: <span class="s">"PERTH-DAY"</span>,\n  <span class="s">"consultant"</span>: <span class="s">"'+(r.consultant==='Dr Anna Ross'?'aross':'efraser')+'"</span> }</div></div></div>';
+  return staffShell('intake','admit-list','Admit '+(r.name||'patient'),'',body,refBanner(r));
+};
+
+var TEMPLATES = {
+  welcome: {label:'Welcome and first appointment', text:function(p,ch){ return ch==='Text' ? 'Perth Day Clinic: your first appointment is on '+p.appt+' with '+p.consultant+'. To rebook call 01738 473 000.' : 'Dear '+p.name.split(' ')[0]+',\n\nYour doctor has referred you to our service and we would like to see you. Your first appointment is on '+p.appt+' with '+p.consultant+' at Perth Day Clinic.\n\nIf you cannot come, please call 01738 473 000 and we will find another time. You are welcome to bring someone with you.'; }},
+  reminder: {label:'Appointment reminder', text:function(p){ return 'Perth Day Clinic: reminder of your appointment on '+p.appt+'. To rebook call 01738 473 000.'; }},
+  missed: {label:'Missed appointment', text:function(p){ return 'Perth Day Clinic: we missed you at your appointment. Please call 01738 473 000 to rebook.'; }},
+  carer: {label:'Carer information evening invitation', text:function(p){ return 'Perth Day Clinic runs a free information evening for carers and families on Thu 15 Oct at 18:30, meeting room 2. Register at mentcare.midscot-health.scot/events.'; }}
+};
+P.outreach = function(){
+  var d=draft;
+  if(d.pi==null) d.pi = S.patients.length-1;
+  var p = S.patients[d.pi];
+  var chans = ['Letter','Text','Email'];
+  var dis = [];
+  if(!p.consent.sms) dis.push('Text');
+  if(!p.consent.email) dis.push('Email');
+  if(!d.ch || dis.indexOf(d.ch)>=0) d.ch='Letter';
+  if(!d.tpl) d.tpl='welcome';
+  var text = d.text!=null ? d.text : TEMPLATES[d.tpl].text(p,d.ch);
+  var hist = S.messages.slice().reverse();
+  var body =
+  '<div class="grid2" style="grid-template-columns:1fr 1.2fr"><div class="card">'+
+  '<div class="fld"><label class="lbl" for="oP">Patient</label><select class="in" id="oP">'+S.patients.map(function(x,i){return '<option value="'+i+'"'+(i===d.pi?' selected':'')+'>'+esc(x.name)+', '+esc(x.ident)+'</option>';}).join('')+'</select></div>'+
+  '<div class="fld"><span class="lbl">Send to</span><label class="chk" style="margin:4px 0"><input type="checkbox" id="oToP" checked><span>'+esc(p.name)+' (patient)</span></label>'+
+  (p.carer?'<label class="chk" style="margin:4px 0"><input type="checkbox" id="oToC"'+(p.consent.carer?'':' disabled')+'><span>'+esc(p.carer)+(p.consent.carer?' (carer, consent given)':' (no consent to contact)')+'</span></label>':'<p class="muted" style="margin:4px 0">No carer recorded.</p>')+'</div>'+
+  '<div class="fld"><span class="lbl">Channel</span>'+segHtml('ch',chans,d.ch,dis)+(dis.length?'<p class="muted" style="margin:6px 0 0">'+dis.join(' and ')+': no consent from patient.</p>':'')+'</div>'+
+  '<div class="fld"><label class="lbl" for="oTpl">Template</label><select class="in" id="oTpl">'+Object.keys(TEMPLATES).map(function(k){return '<option value="'+k+'"'+(k===d.tpl?' selected':'')+'>'+TEMPLATES[k].label+'</option>';}).join('')+'</select></div></div>'+
+  '<div><div class="letter" style="font-family:'+(d.ch==='Letter'?"'Source Serif 4',Georgia,serif":"'Public Sans',sans-serif")+'"><b>'+(d.ch==='Letter'?'Perth Day Clinic, Mental Health Services':d.ch+' message preview')+'</b><br><span style="color:#666">28 September 2026</span><br><br>'+
+  '<label class="lbl" for="oText" style="position:absolute;left:-9999px">Message text</label><textarea class="in" id="oText" style="min-height:'+(d.ch==='Text'?'80':'170')+'px;font-family:inherit;border-style:dashed" maxlength="'+(d.ch==='Text'?160:2000)+'" data-count="oCount">'+esc(text)+'</textarea><div class="cnt-note" id="oCount">'+text.length+' of '+(d.ch==='Text'?'160':'2,000')+' characters</div></div>'+
+  '<div style="display:flex;gap:10px;margin-top:12px"><button class="btn" data-act="sendmsg">Send '+d.ch.toLowerCase()+'</button><button class="btn sec" data-act="resettext">Reset text</button></div>'+
+  (d.ch==='Text'?'<p class="muted" style="margin:8px 0 0">Text messages must not contain diagnoses or treatment details.</p>':'')+'</div></div>'+
+  '<div class="card" style="margin-top:14px"><h4>Contact history</h4>'+(hist.length?'<div class="tbl" style="margin-top:8px"><table class="t"><tr><th>Sent</th><th>To</th><th>Channel</th><th>Message</th><th>Result</th></tr>'+hist.map(function(m){return '<tr><td style="white-space:nowrap">'+esc(m.when)+'</td><td>'+esc(m.to)+'</td><td>'+esc(m.channel)+'</td><td>'+esc(m.text.slice(0,90))+(m.text.length>90?'\u2026':'')+'</td><td><span class="chip '+(m.status==='Failed'?'c-rej':'c-acc')+'">'+esc(m.status)+'</span></td></tr>';}).join('')+'</table></div>':'<div class="empty">No messages yet.</div>')+'</div>';
+  return staffShell('intake','outreach','New message','',body);
+};
+
+P.sequences = function(){
+  var d=draft; if(!d.sid) d.sid='missed';
+  var s = S.sequences.filter(function(x){return x.id===d.sid;})[0];
+  var list = S.sequences.map(function(x){
+    return '<li tabindex="0" data-act="pickseq" data-id="'+x.id+'" style="cursor:pointer;'+(x.id===d.sid?'background:#EEF3FA;margin:0 -8px;padding:7px 8px':'')+'"><b>'+esc(x.name)+'</b> <span class="chip '+(x.active?'c-acc':'c-lo')+'">'+(x.active?'Active':'Paused')+'</span><br><span class="muted">'+x.count+' patients</span></li>';}).join('');
+  var steps = s.steps.map(function(st,i){
+    return '<li><span class="dot done">'+(i+1)+'</span><div><b>'+esc(st.delay)+'</b>: '+esc(st.channel)+'<br><span class="muted">'+esc(st.text)+'</span> <button class="linkish" style="font-weight:400;font-size:12px" data-act="rmstep" data-i="'+i+'">Remove</button></div></li>';}).join('');
+  var body =
+  '<div class="grid2" style="grid-template-columns:1fr 1.7fr"><div class="card"><h4>Sequences</h4><ul class="list" style="margin-top:6px">'+list+'</ul>'+
+  (d.newSeq?'<div class="fld" style="margin-top:10px"><label class="lbl" for="nsName">Name</label><input class="in" id="nsName" placeholder="For example: Group session reminders"></div><button class="btn sm" data-act="addseq">Create</button> <button class="btn sec sm" data-act="cancelseq">Cancel</button>':'<button class="btn sec sm" style="margin-top:8px" data-act="newseq">New sequence</button>')+'</div>'+
+  '<div class="card"><div class="sec-h" style="font-size:15px">'+esc(s.name)+segHtml('seqstate',['Active','Paused'],s.active?'Active':'Paused')+'</div>'+
+  '<p class="muted" style="margin:0 0 12px">Starts when: '+esc(s.trigger)+'</p>'+
+  (s.steps.length?'<ol class="timeline">'+steps+'</ol>':'<div class="empty" style="margin-bottom:12px">No steps yet. Add the first step below.</div>')+
+  '<p class="muted" style="margin:0 0 4px">Stops when: '+esc(s.stop)+'</p>'+
+  '<div class="stepadd"><div><label class="lbl" for="stDelay">When</label><select class="in" id="stDelay"><option>Same day</option><option>After 1 day</option><option>After 2 days</option><option>After 5 days</option><option>1 day before</option><option>7 days before</option></select></div>'+
+  '<div><label class="lbl" for="stCh">Channel</label><select class="in" id="stCh"><option>Text</option><option>Letter</option><option>Email</option><option>Staff task</option></select></div>'+
+  '<div><label class="lbl" for="stText">Message or task</label><input class="in" id="stText" placeholder="What is sent or done"></div><button class="btn sm" data-act="addstep">+ Add step</button></div>'+
+  '<div style="margin-top:14px"><button class="btn" data-act="saveseq">Save sequence</button></div>'+
+  '<p class="muted" style="margin:10px 0 0">Only channels the patient has consented to are used; other steps are skipped.</p></div></div>';
+  return staffShell('intake','sequences','Reminder sequences','',body);
+};
+
+P.sessions = function(){
+  var d=draft; if(!d.sel) d.sel='S1';
+  var cur = S.sessions.filter(function(x){return x.id===d.sel;})[0];
+  var e=d.err||{};
+  function regCount(x){ return x.regs.length + (x.extra||0); }
+  var rows = S.sessions.map(function(x){
+    var reg = x.type==='Drop-in' ? 'Open' : regCount(x)+' of '+x.places+(x.waiting?', '+x.waiting+' waiting':'');
+    return '<tr data-go="session" data-id="'+x.id+'" tabindex="0"'+(x.id===d.sel?' class="hl"':'')+'><td><b>'+esc(x.name)+'</b></td><td style="white-space:nowrap">'+esc(x.date)+'</td><td>'+reg+'</td></tr>';}).join('');
+  var detail = cur ? '<div class="card" style="margin-top:14px"><div class="sec-h">'+esc(cur.name)+', '+(cur.type==='Drop-in'?'no registration':regCount(cur)+' registered')+'</div>'+
+    '<div style="margin-bottom:10px">'+(cur.pub?'<button class="btn sec sm" data-act="copylink">Copy public link</button> <button class="btn sec sm" data-act="openpublic" data-id="'+cur.id+'">Open public page</button> ':'')+'<button class="btn sec sm" data-act="msgregs">Message registrants</button></div>'+
+    (cur.regs.length?'<table class="t"><tr><th>Name</th><th>Relation</th><th>Attended</th></tr>'+cur.regs.map(function(g,i){return '<tr><td>'+esc(g.name)+'</td><td>'+esc(g.rel)+'</td><td><input type="checkbox" aria-label="Attended" data-act="att" data-i="'+i+'"'+(g.att?' checked':'')+'></td></tr>';}).join('')+'</table>'+(cur.extra?'<p class="muted" style="margin:8px 0 0">and '+cur.extra+' earlier registrations</p>':''):'<div class="empty">No named registrations.</div>')+'</div>' : '';
+  var body =
+  '<div class="grid2" style="grid-template-columns:1fr 1.35fr"><div class="card"><h4>New session</h4>'+
+  '<div class="fld" style="margin-top:10px"><label class="lbl" for="sName">Name *</label><input class="in'+(e.sName?' err':'')+'" id="sName" value="'+esc((d.v||{}).sName||'')+'">'+(e.sName?'<div class="errtxt">Enter a name for the session.</div>':'')+'</div>'+
+  '<div class="fld"><span class="lbl">Type</span>'+segHtml('stype',['Group','Carer event','Drop-in'],(d.v||{}).stype||'Carer event')+'</div>'+
+  '<div class="row"><div class="fld"><label class="lbl" for="sDate">Date *</label><input class="in'+(e.sDate?' err':'')+'" id="sDate" type="date" value="'+esc((d.v||{}).sDate||'')+'">'+(e.sDate?'<div class="errtxt">Choose a date.</div>':'')+'</div><div class="fld"><label class="lbl" for="sTime">Time *</label><input class="in" id="sTime" type="time" value="'+esc((d.v||{}).sTime||'18:30')+'"></div><div class="fld"><label class="lbl" for="sPlaces">Places</label><input class="in'+(e.sPlaces?' err':'')+'" id="sPlaces" inputmode="numeric" value="'+esc((d.v||{}).sPlaces||'20')+'">'+(e.sPlaces?'<div class="errtxt">1 to 200.</div>':'')+'</div></div>'+
+  '<div class="fld"><label class="lbl" for="sWhere">Where</label><input class="in" id="sWhere" value="'+esc((d.v||{}).sWhere||'Perth Day Clinic, meeting room 2')+'"></div>'+
+  '<label class="chk"><input type="checkbox" id="sPub" checked><span>Allow registration through a public link</span></label><button class="btn" data-act="createsession">Create session</button></div>'+
+  '<div><div class="tbl"><table class="t"><tr><th>Session</th><th>Date</th><th>Registered</th></tr>'+rows+'</table></div>'+detail+'</div></div>';
+  return staffShell('intake','sessions','Sessions and events','',body);
+};
+
+P.pipeline = function(){
+  var p=S.pipe;
+  function bar(l,v,max,c,w){ return '<div class="barrow" style="grid-template-columns:'+(w||'200px')+' 1fr 40px"><span>'+l+'</span><span class="track"><i style="width:'+Math.round(v/max*100)+'%;background:'+c+'"></i></span><b>'+v+'</b></div>'; }
+  var srcMax=Math.max(p.gp,p.ae,p.hosp);
+  var body =
+  '<div class="card"><h4>From referral to first appointment</h4>'+bar('Referrals received',p.received,p.received,'#1F3F66')+bar('Triaged',p.triaged,p.received,'#2E5A8A')+bar('Accepted and admitted',p.accepted,p.received,'#2D5B8C')+bar('Attended first appointment',p.attended,p.received,'#1D5A3E')+'</div>'+
+  '<div class="grid3" style="margin-top:16px"><div class="card"><h4>By source</h4>'+bar('GP',p.gp,srcMax,'#1F3F66','80px')+bar('A&amp;E',p.ae,srcMax,'#1F3F66','80px')+bar('Hospital',p.hosp,srcMax,'#1F3F66','80px')+'</div>'+
+  '<div class="card"><h4>Average wait to first appointment</h4><ul class="list"><li><span class="chip c-hi">Urgent</span> 5 days</li><li><span class="chip c-med">Soon</span> 16 days</li><li><span class="chip c-lo">Routine</span> 34 days</li></ul></div>'+
+  '<div class="card"><h4>Outreach</h4><ul class="list"><li>First appointments missed: <b>'+p.missed+'</b></li><li>Rebooked after follow-up: <b>'+p.rebooked+'</b></li><li>Carer event registrations: <b>'+p.carerRegs+'</b></li></ul></div></div>'+
+  '<p class="muted" style="margin:14px 0 0">Totals only. No patient-identifiable information is shown.</p>';
+  return staffShell('intake','pipeline','Referral pipeline, September 2026','<button class="btn sec sm" data-act="addreport">Add to monthly report</button>',body);
+};
+
+/* ----- triage ----- */
+P['triage-list'] = function(){
+  var list = S.referrals.filter(function(r){return r.status==='triage';}).sort(function(a,b){return PR[prio(a)]-PR[prio(b)];});
+  var body = '<div class="card"><h4>Referrals assigned for triage</h4>'+(list.length?'<div class="tbl" style="margin-top:10px"><table class="t"><tr><th>Referral</th><th>Patient</th><th>Source</th><th>Priority</th><th>Assigned to</th><th></th></tr>'+list.map(function(r){
+    return '<tr data-go="triage" data-id="'+r.id+'" tabindex="0"><td>'+r.id+'</td><td><b>'+pname(r)+'</b></td><td>'+esc(r.sourceLabel)+'</td><td>'+prioChip(prio(r))+'</td><td>'+esc(r.assignedTo||'')+'</td><td><button class="btn sm" data-nav="triage" data-id="'+r.id+'">Triage</button></td></tr>';}).join('')+'</table></div>'
+    :'<div class="empty" style="margin-top:10px">Nothing to triage. The intake coordinator assigns referrals from the referral inbox.</div>')+'</div>';
+  return staffShell('triage','triage-list','Referrals to triage','',body);
+};
+
+P.triage = function(){
+  var r = ref(route.id); if(!r) return P['triage-list']();
+  var d=draft; if(!d.prio) d.prio=prio(r); if(!d.dec) d.dec='Accept';
+  var match = r.match;
+  var dupHtml = match ?
+    (d.dup ? '<div class="toast '+(d.dup==='same'?'info':'ok')+'"><div>'+(d.dup==='same'?'Marked as the same person. The existing record will be reopened at admission.':'Marked as a different person. A new record will be created.')+' <button class="linkish" data-act="dupundo">Change</button></div></div>'
+      : '<div class="toast info"><div><b>Possible match:</b> '+esc(match.name)+', born '+esc(match.dob)+', NHS '+esc(match.nhs)+'. '+esc(match.seen)+'.</div></div><div style="margin-top:10px"><button class="btn sec sm" data-act="dup" data-v="same">Same person: reopen record</button> <button class="btn sm" data-act="dup" data-v="diff">Different person</button></div>'+(d.dupErr?'<div class="errtxt">Confirm whether this is the same person before deciding.</div>':''))
+    : '<div class="toast ok"><b>\u2713</b><div>No existing record matches this name, date of birth or NHS number.</div></div>';
+  var body =
+  '<div class="grid2" style="grid-template-columns:1.2fr 1fr"><div><div class="card"><p class="sec-h">Reason for referral</p><p style="margin:0 0 10px">'+esc(r.reason)+'</p>'+
+  '<div class="row"><div><span class="lbl">Urgency from referrer</span>'+esc(r.urgency)+'</div><div><span class="lbl">Risk from referrer</span>'+esc(r.risk)+'</div><div><span class="lbl">Contact</span>'+[r.consent.sms?'Text':'',r.consent.email?'Email':'',r.consent.carer?'Carer':''].filter(Boolean).join(', ')+'</div></div>'+
+  '<div class="docview" style="height:170px;margin-top:12px"><div class="page"><b style="font-size:11px;color:#333">'+esc(r.doc)+'</b><div class="ln" style="width:60%"></div><div class="ln"></div><div class="ln" style="width:85%"></div><div class="ln"></div><div class="ln" style="width:70%"></div></div></div>'+
+  '<p class="muted" style="margin:10px 0 0">Documents '+(r.docsReviewed?'reviewed by Lorna Kerr':'not yet reviewed')+'</p></div>'+
+  '<div class="card" style="margin-top:14px"><p class="sec-h">Existing records check</p>'+dupHtml+'</div></div>'+
+  '<div class="card"><div class="fld"><span class="lbl">Priority</span>'+segHtml('prio',['Routine','Soon','Urgent'],d.prio)+'<p class="muted" style="margin:6px 0 0">'+({Urgent:'Urgent: first appointment within 7 days.',Soon:'Soon: first appointment within the local target for non-urgent specialist referrals.',Routine:'Routine: next available appointment.'})[d.prio]+'</p></div>'+
+  '<div class="fld"><label class="lbl" for="tDec">Decision</label><select class="in" id="tDec"><option'+(d.dec==='Accept'?' selected':'')+'>Accept</option><option'+(d.dec==='Request more information'?' selected':'')+'>Request more information</option><option'+(d.dec==='Redirect'?' selected':'')+'>Redirect</option></select></div>'+
+  '<div class="row" data-show="Accept"'+(d.dec==='Accept'?'':' style="display:none"')+'><div class="fld"><label class="lbl" for="tClinic">Clinic</label><select class="in" id="tClinic"><option>Perth day clinic</option><option>Stirling community health centre</option><option>Crieff health centre</option></select></div><div class="fld"><label class="lbl" for="tCons">Responsible consultant</label><select class="in" id="tCons"><option>Dr Ewan Fraser</option><option>Dr Anna Ross</option></select></div></div>'+
+  '<div class="fld" data-show="Redirect"'+(d.dec==='Redirect'?'':' style="display:none"')+'><label class="lbl" for="tRedir">Service suggested instead</label><select class="in" id="tRedir"><option>Primary care talking therapies</option><option>Perinatal mental health team</option><option>Addiction services</option><option>Crisis team</option></select></div>'+
+  '<div class="fld"><label class="lbl" for="tMsg">'+(d.dec==='Request more information'?'Questions for the referrer *':'Message to referrer')+'</label><textarea class="in'+(d.msgErr?' err':'')+'" id="tMsg">'+esc(d.msg!=null?d.msg:(d.dec==='Accept'?'Accepted. Patient will be offered a first appointment. Please continue current treatment until seen.':''))+'</textarea>'+(d.msgErr?'<div class="errtxt">Write your questions for the referrer.</div>':'')+'</div>'+
+  '<button class="btn" data-act="decide" data-id="'+r.id+'">Save decision</button>'+
+  '<p class="muted" style="margin:12px 0 0"><b>Request more information</b> sends your questions to the referrer; <b>Redirect</b> records the service suggested instead.</p></div></div>';
+  return staffShell('triage','triage-list','Triage referral '+r.id,'',body,refBanner(r));
+};
+
+P.find = function(){ return staffShell('triage','find','Find a patient','',placeholder('Find a patient','the Patient records block')); };
+P.clinic = function(){ return staffShell('triage','clinic',"Today's clinic",'',placeholder("Today's clinic",'the Clinical care block')); };
+function placeholder(t,block){ return '<div class="placeholder card"><h4 class="ui-h">'+t+'</h4><p class="muted">This screen is built by another team as part of '+block+'. When Mentcare is assembled, it opens here with the same sign-in and menu.</p><p class="muted">See the whole-system user guide for how it works.</p></div>'; }
+
+/* ----- public ----- */
+P.public = function(){
+  var d=draft; if(d.pi==null) d.pi=S.patients.length-1;
+  var p=S.patients[d.pi];
+  var msgs=S.messages.filter(function(m){return m.to===p.name;});
+  var texts=msgs.filter(function(m){return m.channel==='Text';});
+  var letters=msgs.filter(function(m){return m.channel==='Letter';});
+  var ev=S.sessions.filter(function(s){return s.pub;})[0];
+  return '<div class="pubnav"><div class="wordmark"><span class="crest">M</span>Mentcare, patients and carers</div><label for="pubP" style="color:#D6E2EF">Show messages for</label><select class="in" id="pubP" style="width:auto;display:inline-block">'+S.patients.map(function(x,i){return '<option value="'+i+'"'+(i===d.pi?' selected':'')+'>'+esc(x.name)+'</option>';}).join('')+'</select></div>'+
+  '<div class="body" style="display:grid;grid-template-columns:.8fr 1.2fr 1fr;gap:20px;align-items:start;flex:1">'+
+  '<div class="phone"><div class="screen"><p class="muted" style="text-align:center;margin:0 0 10px;font-size:11px">Text messages</p>'+(texts.length?texts.map(function(m){return '<div class="bubble">'+esc(m.text)+'<br><span class="muted" style="font-size:10.5px">'+esc(m.when)+'</span></div>';}).join(''):'<p class="muted" style="font-size:12px;text-align:center">No text messages'+(p.consent.sms?'':' (patient has not agreed to texts)')+'.</p>')+'</div></div>'+
+  '<div class="letter">'+(letters.length?'<b>Perth Day Clinic, Mental Health Services</b><br><span style="color:#666">'+esc(letters[letters.length-1].when)+'</span><br><br>'+esc(letters[letters.length-1].text).replace(/\n/g,'<br>'):'<p class="muted" style="font-family:\'Public Sans\',sans-serif">No letters yet. Admit a patient or send a letter from Outreach messages to see it here.</p>')+'</div>'+
+  (ev?P.eventCard(ev):'<div class="card"><p class="muted">No public events.</p></div>')+'</div>';
+};
+P.eventCard = function(ev){
+  var left = ev.places - ev.regs.length - (ev.extra||0);
+  var e=draft.evErr||{};
+  return '<div class="card"><h4>'+esc(ev.name)+'</h4><p class="sub">'+esc(ev.date)+', '+esc(ev.time)+'. '+esc(ev.where)+'. '+(left>0?left+' places left.':'Fully booked.')+'</p>'+
+  (draft.evDone?'<div class="toast ok"><b>\u2713</b><div><b>You\'re registered.</b> We\'ll send a reminder before the evening.</div></div>':
+  '<div class="fld"><label class="lbl" for="evName">Your name</label><input class="in'+(e.n?' err':'')+'" id="evName">'+(e.n?'<div class="errtxt">Enter your name.</div>':'')+'</div>'+
+  '<div class="fld"><label class="lbl" for="evContact">Email or phone</label><input class="in'+(e.c?' err':'')+'" id="evContact">'+(e.c?'<div class="errtxt">Enter an email address or phone number.</div>':'')+'</div>'+
+  '<div class="fld"><label class="lbl" for="evRel">You are</label><select class="in" id="evRel"><option>Carer</option><option>Family member</option><option>Friend</option></select></div>'+
+  '<button class="btn" data-act="evreg" data-id="'+ev.id+'"'+(left>0?'':' disabled')+'>Register</button>')+'</div>';
+};
+
+/* ---------------- render ---------------- */
+function render(){
+  var v=$('#view'); var fn=P[route.page]||P.signin;
+  v.innerHTML = fn();
+  $('#roleSel').value = route.role;
+}
+
+/* ---------------- actions ---------------- */
+function readRefForm(){
+  var v={};
+  ['rName','rDob','rNhs','rAddr','rPhone','rCarer'].forEach(function(k){ v[k]=$('#'+k).value.trim(); });
+  v.rReason=$('#rReason').value.trim(); v.urg=segVal('urg'); v.risk=segVal('risk');
+  v.cSms=$('#cSms').checked; v.cEmail=$('#cEmail').checked; v.cCarer=$('#cCarer').checked;
+  return v;
+}
+function validDate(s){
+  var m=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(s); if(!m) return false;
+  var d=new Date(+m[3],+m[2]-1,+m[1]); return d.getFullYear()==+m[3]&&d.getMonth()==+m[2]-1&&d.getDate()==+m[1]&&d<new Date();
+}
+function now(){ var d=new Date(); return '28 Sep, '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
+
+var ACT = {
+  role: function(el){ setRole(el.getAttribute('data-role')); },
+  signout: function(){ setRole('signin'); },
+  signin1: function(){ draft.acct=$('#acct').value; route.step=2; render(); },
+  signback: function(){ route.step=1; render(); },
+  signin2: function(){ route.step=1; setRole(draft.acct||'intake'); toast('ok','Signed in.'); },
+  fillref: function(){
+    draft.vals={rName:'Fiona Marshall',rDob:'14/06/1985',rNhs:'',rAddr:'9 South Street, Perth PH2 8PG',rPhone:'07834 556 120',rCarer:'Tom Marshall (husband), 07834 556 121',rReason:'Low mood and anxiety since redundancy in June. Poor sleep, stopped going out. Sertraline 50 mg for 6 weeks with little change.',urg:'Soon',risk:'None known',cSms:true,cEmail:false,cCarer:true};
+    draft.file='referral_letter_marshall.pdf'; draft.err={}; render();
+  },
+  rmfile: function(){ draft.vals=readRefForm(); draft.file=null; render(); },
+  sendref: function(){
+    var v=readRefForm(), e={};
+    if(!v.rName) e.rName='Enter the patient\'s full name.';
+    if(!v.rDob) e.rDob='Enter the date of birth.'; else if(!validDate(v.rDob)) e.rDob='Enter a real date in the past as DD/MM/YYYY, for example 03/07/1997.';
+    if(v.rNhs && !/^\d{10}$/.test(v.rNhs.replace(/\s/g,''))) e.rNhs='An NHS number has 10 digits. Leave it empty if not known.';
+    if(!v.rAddr) e.rAddr='Enter an address, or "No fixed address".';
+    if(v.rPhone && !/^07\d{9}$/.test(v.rPhone.replace(/\s/g,''))) e.rPhone='Enter a full UK mobile number, for example 07712 345678.';
+    if(!v.rReason) e.rReason='Describe the reason for referral.';
+    if(/\b(select|insert|delete|drop|update)\b[\s\S]*\b(from|into|table|set)\b/i.test(v.rReason)) e.rReason='This text looks like a database command and can\'t be accepted.';
+    if(!v.urg) e.urg='Choose an urgency.';
+    if(!v.risk) e.risk='Choose a risk level.';
+    draft.vals=v; draft.err=e;
+    if(Object.keys(e).length){ render(); var first=$('.err'); if(first) first.focus(); return; }
+    var id='R-2026-0'+(S.nextRef++);
+    var nhs=v.rNhs? v.rNhs.replace(/\s/g,'').replace(/^(\d{3})(\d{3})(\d{4})$/,'$1 $2 $3') : '';
+    S.referrals.push({id:id,name:v.rName,desc:'',dob:v.rDob,nhs:nhs,address:v.rAddr,phone:v.rPhone,carer:v.rCarer,reason:v.rReason,urgency:v.urg,risk:v.risk,source:'gp',sourceLabel:'GP, Tay Street',referrer:'Dr Sarah Ahmed',received:'Today '+now().split(', ')[1],status:'received',docsReviewed:false,doc:draft.file||'no_document_attached',consent:{sms:v.cSms,email:v.cEmail,carer:v.cCarer},notes:[]});
+    S.pipe.received++; S.pipe.gp++; save();
+    route.sel=id; go('ref-mine');
+    toast('ok','<b>Referral '+id+' sent.</b> Status: Received. You\'ll be told when a decision is made.');
+  },
+  inforeply: function(el){
+    var r=ref(el.getAttribute('data-id')); var t=$('#infoReply').value.trim();
+    if(!t){ toast('bad','Add the requested information before sending.'); return; }
+    r.status='triage'; r.reason += ' Additional information from referrer: '+t; r.assignedTo=r.assignedTo||'Dr Ewan Fraser'; save(); render();
+    toast('ok','Information sent. The referral is back with the triage clinician.');
+  },
+  tab: function(el){ draft.tab=el.getAttribute('data-tab'); route.sel=null; render(); },
+  closesel: function(){ route.sel=null; render(); },
+  viewdoc: function(){ toast('info','In the real system the document opens in a secure viewer. Documents are never available through a public link.'); },
+  assign: function(el){
+    var r=ref(el.getAttribute('data-id'));
+    if(!r.docsReviewed){ toast('bad','Mark the documents as reviewed before assigning.'); return; }
+    r.status='triage'; r.assignedTo=$('#assignTo').value; save(); route.sel=null; render();
+    toast('ok','<b>'+r.id+'</b> assigned to '+esc(r.assignedTo)+' for triage. The referrer sees it as Under review.');
+  },
+  dup: function(el){ draft.msg=$('#tMsg').value; draft.dup=el.getAttribute('data-v'); draft.dupErr=false; render(); },
+  dupundo: function(){ draft.msg=$('#tMsg').value; draft.dup=null; render(); },
+  decide: function(el){
+    var r=ref(el.getAttribute('data-id')); var dec=$('#tDec').value, msg=$('#tMsg').value.trim();
+    draft.msg=msg; draft.prio=segVal('prio');
+    if(r.match && !draft.dup){ draft.dupErr=true; render(); toast('bad','Resolve the existing records check first.'); return; }
+    if(dec==='Request more information' && !msg){ draft.msgErr=true; render(); return; }
+    r.priority=draft.prio; r.decisionMsg=msg; S.pipe.triaged++;
+    if(dec==='Accept'){ r.status='accepted'; r.clinic=$('#tClinic').value; r.consultant=$('#tCons').value; r.reopen=draft.dup==='same'; S.pipe.accepted++; }
+    else if(dec==='Redirect'){ r.status='redirected'; r.decisionMsg=(msg?msg+' ':'')+'Suggested service: '+$('#tRedir').value+'.'; }
+    else { r.status='info'; r.question=msg; }
+    save(); go('triage-list');
+    toast('ok','<b>Decision saved: '+esc(dec)+'.</b> '+esc(r.referrer)+' has been notified.'+(dec==='Accept'?' The referral is ready for admission.':''));
+  },
+  book: function(){
+    var s=$('input[name=slot]:checked'); if(!s){ toast('bad','Choose a slot first.'); return; }
+    draft.name=$('#aName').value; draft.booked=s.value; render();
+    toast('ok','Booked '+esc(s.value)+' in APPOINTMENTS.');
+  },
+  admit: function(el){
+    var r=ref(el.getAttribute('data-id'));
+    var name=$('#aName').value.trim();
+    if(!name){ toast('bad','Enter the patient\'s name before admitting. Unidentified patients can\'t be admitted.'); $('#aName').classList.add('err'); $('#aName').focus(); return; }
+    var phone=$('#aPhone').value.trim(), carer=$('#aCarer').value.trim(), addr=$('#aAddr').value.trim();
+    r.name=name; r.phone=phone; r.carer=carer; r.address=addr;
+    draft.name=name;
+    var ident=draft.ident; if(!r.nhs) S.nextId++;
+    S.slots=S.slots.filter(function(x){return x!==draft.booked;});
+    var p={name:name,ident:ident,phone:phone,carer:carer,consent:r.consent,clinic:r.clinic,consultant:r.consultant,appt:draft.booked};
+    var i=0;
+    (function step(){
+      i++; draft.done=i; render();
+      if(i<4){ setTimeout(step, 450); return; }
+      r.status='admitted'; S.patients.push(p);
+      S.messages.push({to:name,channel:'Letter',text:TEMPLATES.welcome.text(p,'Letter'),when:now(),status:'Queued for post'});
+      S.sequences[0].count++; r.decisionMsg=(r.decisionMsg||'')+' First appointment: '+draft.booked+'.';
+      save(); render();
+      toast('ok','<b>'+esc(name)+' admitted.</b> Welcome letter queued and appointment reminders started.');
+    })();
+  },
+  sendmsg: function(){
+    var p=S.patients[draft.pi]; var ch=draft.ch; var t=$('#oText').value.trim();
+    if(!t){ toast('bad','The message is empty.'); return; }
+    if(ch==='Text' && /(diagnos|depress|anxiety|psychos|medication|mg\b)/i.test(t)){ toast('bad','Text messages can\'t include clinical details. Remove diagnosis or medication wording.'); return; }
+    var toC=$('#oToC')&&$('#oToC').checked, toP=$('#oToP').checked;
+    if(!toP && !toC){ toast('bad','Choose at least one recipient.'); return; }
+    var status = ch==='Letter'?'Queued for post':'Delivered';
+    if(toP) S.messages.push({to:p.name,channel:ch,text:t,when:now(),status:status});
+    if(toC) S.messages.push({to:p.carer+' (carer)',channel:ch,text:t,when:now(),status:status});
+    save(); draft.text=null; render();
+    toast('ok',ch==='Letter'?'Letter sent to the print queue for posting. Recorded in the contact history.':ch+' sent. Recorded in the contact history.');
+  },
+  resettext: function(){ draft.text=null; render(); },
+  pickseq: function(el){ draft.sid=el.getAttribute('data-id'); render(); },
+  newseq: function(){ draft.newSeq=true; render(); $('#nsName').focus(); },
+  cancelseq: function(){ draft.newSeq=false; render(); },
+  addseq: function(){ var n=$('#nsName').value.trim(); if(!n){ toast('bad','Give the sequence a name.'); return; }
+    var id='q'+Date.now(); S.sequences.push({id:id,name:n,active:false,count:0,trigger:'a staff member adds a patient',stop:'the patient is discharged',steps:[]}); draft.sid=id; draft.newSeq=false; save(); render(); toast('ok','Sequence created. Add its steps, then set it to Active.'); },
+  addstep: function(){ var s=S.sequences.filter(function(x){return x.id===draft.sid;})[0]; var t=$('#stText').value.trim();
+    if(!t){ toast('bad','Describe what is sent or done in this step.'); $('#stText').focus(); return; }
+    s.steps.push({delay:$('#stDelay').value,channel:$('#stCh').value,text:t}); save(); render(); },
+  rmstep: function(el){ var s=S.sequences.filter(function(x){return x.id===draft.sid;})[0]; s.steps.splice(+el.getAttribute('data-i'),1); save(); render(); },
+  saveseq: function(){ var s=S.sequences.filter(function(x){return x.id===draft.sid;})[0]; s.active=segVal('seqstate')==='Active';
+    if(s.active && !s.steps.length){ s.active=false; render(); toast('bad','Add at least one step before activating.'); return; }
+    save(); render(); toast('ok','Sequence saved. '+(s.active?'It is active.':'It is paused.')); },
+  createsession: function(){
+    var v={sName:$('#sName').value.trim(),stype:segVal('stype'),sDate:$('#sDate').value,sTime:$('#sTime').value,sPlaces:$('#sPlaces').value.trim(),sWhere:$('#sWhere').value.trim()};
+    var e={}; if(!v.sName) e.sName=1; if(!v.sDate) e.sDate=1; var n=parseInt(v.sPlaces,10); if(!(n>=1&&n<=200)) e.sPlaces=1;
+    draft.v=v; draft.err=e; if(Object.keys(e).length){ render(); return; }
+    var dt=new Date(v.sDate+'T00:00'); var label=dt.getDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][dt.getMonth()];
+    var id='S'+(S.nextSession++);
+    S.sessions.push({id:id,name:v.sName,type:v.stype,date:label,time:v.sTime,places:n,where:v.sWhere,pub:$('#sPub').checked&&v.stype!=='Group',extra:0,regs:[]});
+    save(); draft={sel:id}; render(); toast('ok','Session created.'+(v.stype!=='Group'&&$('#sPub')?' Public registration is open.':''));
+  },
+  att: function(el){ var s=S.sessions.filter(function(x){return x.id===draft.sel;})[0]; s.regs[+el.getAttribute('data-i')].att=el.checked; save(); },
+  copylink: function(){ var s=S.sessions.filter(function(x){return x.id===draft.sel;})[0]; var link='https://mentcare.midscot-health.scot/events/'+s.id;
+    try{ navigator.clipboard.writeText(link).then(function(){toast('ok','Public link copied.');},function(){toast('info','Public link: '+link);}); }catch(e){ toast('info','Public link: '+link); } },
+  openpublic: function(){ setRole('public'); },
+  msgregs: function(){ toast('info','Opens Outreach messages with this session\'s registrants selected.'); },
+  addreport: function(){ toast('ok','Pipeline figures added to the September management report.'); },
+  evreg: function(el){
+    var ev=S.sessions.filter(function(x){return x.id===el.getAttribute('data-id');})[0];
+    var n=$('#evName').value.trim(), c=$('#evContact').value.trim(); var e={};
+    if(!n) e.n=1; if(!c || !(/@/.test(c)||/^[\d\s+]{10,}$/.test(c))) e.c=1;
+    draft.evErr=e; if(Object.keys(e).length){ render(); return; }
+    ev.regs.push({name:n,rel:$('#evRel').value,att:false}); S.pipe.carerRegs++; save(); draft.evDone=true; render();
+  }
+};
+
+function setRole(role){
+  route.role=role; route.sel=null; route.step=1; draft={};
+  route.page = {signin:'signin',referrer:'ref-new',intake:'inbox',triage:'triage-list',public:'public'}[role];
+  render(); window.scrollTo(0,0);
+}
+
+/* ---------------- events ---------------- */
+document.addEventListener('click', function(ev){
+  var t=ev.target;
+  var segBtn=t.closest('.seg button');
+  if(segBtn && !segBtn.disabled){
+    var seg=segBtn.parentNode, name=seg.getAttribute('data-seg');
+    $all('button',seg).forEach(function(b){ b.classList.toggle('on',b===segBtn); b.setAttribute('aria-pressed',b===segBtn); });
+    seg.classList.remove('bad');
+    var val=segBtn.getAttribute('data-val');
+    if(name==='ch'){ draft.ch=val; draft.text=null; render(); }
+    if(name==='prio'){ draft.prio=val; draft.msg=$('#tMsg').value; render(); }
+    return;
+  }
+  var nav=t.closest('[data-nav]');
+  if(nav){ ev.preventDefault(); var pg=nav.getAttribute('data-nav'); route.sel=null; go(pg, nav.getAttribute('data-id')); return; }
+  var a=t.closest('[data-act]');
+  if(a && a.tagName!=='INPUT'){ var fn=ACT[a.getAttribute('data-act')]; if(fn){ ev.preventDefault(); fn(a); } return; }
+  var row=t.closest('tr[data-go]');
+  if(row && !t.closest('input,button,select')){
+    var kind=row.getAttribute('data-go'), id=row.getAttribute('data-id');
+    if(kind==='sel'){ route.sel = route.sel===id?null:id; render(); }
+    else if(kind==='triage'){ go('triage',id); }
+    else if(kind==='session'){ draft.sel=id; render(); }
+  }
+});
+document.addEventListener('keydown', function(ev){
+  if(ev.key!=='Enter' && ev.key!==' ') return;
+  var t=ev.target;
+  if(t.matches('tr[data-go], .side a, .pubnav a, [role=tab], li[data-act]')){ ev.preventDefault(); t.click(); }
+});
+document.addEventListener('change', function(ev){
+  var t=ev.target;
+  if(t.id==='acct'){ draft.acct=t.value; render(); }
+  else if(t.id==='rFile'){ draft.vals=readRefForm(); draft.file=t.files[0]?t.files[0].name:null; render(); }
+  else if(t.id==='inboxSrc'){ draft.src=t.value; render(); }
+  else if(t.id==='oP'){ draft={pi:+t.value}; render(); }
+  else if(t.id==='oTpl'){ draft.tpl=t.value; draft.text=null; render(); }
+  else if(t.id==='pubP'){ draft={pi:+t.value}; render(); }
+  else if(t.id==='tDec'){ draft.dec=t.value; $all('[data-show]').forEach(function(x){ x.style.display = x.getAttribute('data-show')===t.value?'':'none'; }); var lbl=$('label[for=tMsg]'); if(lbl) lbl.textContent = t.value==='Request more information'?'Questions for the referrer *':'Message to referrer'; }
+  else if(t.getAttribute('data-act')==='docrev'){ var r=ref(t.getAttribute('data-id')); r.docsReviewed=t.checked; save(); render(); }
+  else if(t.getAttribute('data-act')==='att'){ ACT.att(t); }
+});
+document.addEventListener('input', function(ev){
+  var t=ev.target;
+  var c=t.getAttribute && t.getAttribute('data-count');
+  if(c){ var el=document.getElementById(c); if(el) el.textContent = t.value.length+' of '+t.getAttribute('maxlength').replace(/\B(?=(\d{3})+(?!\d))/g,',')+' characters'; }
+  if(t.id==='oText') draft.text=t.value;
+  if(t.id==='inboxQ'){ draft.q=t.value; var pos=t.selectionStart; render(); var n=$('#inboxQ'); n.focus(); n.setSelectionRange(pos,pos); }
+  if(t.classList && t.classList.contains('err')) t.classList.remove('err');
+});
+$('#roleSel').addEventListener('change', function(){ setRole(this.value); });
+$('#resetBtn').addEventListener('click', function(){ S=seed(); save(); setRole(route.role); toast('ok','Demo data reset.'); });
+
+render();
+})();
+</script>
+</body>
+</html>
